@@ -28,7 +28,31 @@ La motivación imperante y la necesidad de este proyecto nace precisamente de es
 
 Debido a que el sistema Access está confinado en un único terminal o, en su defecto, no gestiona eficientemente sesiones ni el bloqueo de transacciones en un entorno multi-sesión, no existe control de concurrencia. El resultado es un déficit crítico en la visibilidad del inventario en tiempo real, bloqueos administrativos al introducir datos solapados y una toma de decisiones errática al no conocer a ciencia cierta qué segmentos de suelo de la nave continúan libres para la entrada inminente de nuevos tráilers de mercancía de James Hardie.
 
-### 2.2. Enunciado del Problema
+### 2.2. Estado del Arte y Marco Teórico
+
+La concepción de este Trabajo de Fin de Grado exige una revisión bibliográfica y técnica exhaustiva sobre las aproximaciones tecnológicas consolidadas en el sector logístico, así como el análisis de las metodologías transaccionales requeridas para orquestar infraestructuras concurrentes de alta demanda. Este análisis previo, estructurado en base a las premisas del consorcio industrial y la literatura académica subyacente, permite justificar empíricamente la necesidad de una solución de software hecha a medida.
+
+#### 2.2.1. Exploración de Soluciones y Tecnologías Existentes
+
+En la actualidad, el mercado de software logístico ofrece multitud de Sistemas de Gestión de Almacenes (WMS, por sus siglas en inglés) estandarizados orientados a regular el inventario y trazar la cadena de suministro, operando mayoritariamente bajo el paradigma de Software as a Service (SaaS). Estas herramientas comerciales, tales como *Wareventory* (Ye Chen, 2024), proponen enfoques dinámicos centrados en aplicaciones web para la mitigación del obsoleto modelo de terminales físicos aislados. Su filosofía radica en descentralizar la información, delegando el registro a plataformas en la nube accesibles desde cualquier dispositivo inteligente en pista.
+
+Paralelamente, corporaciones líderes en la digitalización industrial, como *Schneider Electric* (2022), inciden en la necesidad imperativa de adoptar soluciones de automatización inteligente (*Smart Logistics*) y arquitecturas interconectadas. El propósito fundamental de esta evolución es brindar un ecosistema holístico donde el flujo logístico físico se encuentra monitorizado digitalmente en tiempo real, erradicando los retrasos (*delay*) propios de la transcripción manual de datos desde hojas de papel.
+
+Desde un punto de vista estrictamente arquitectónico y de persistencia de datos, el marco teórico contemporáneo de los Sistemas Gestores de Bases de Datos Relacionales (SGBDR) desautoriza formalmente el uso de motores ofimáticos estáticos para entornos multiusuario masivos (Date, 2004; Elmasri & Navathe, 2016). La gestión de la concurrencia —la capacidad de atender peticiones simultáneas de múltiples operarios reubicando palés— es un requisito no funcional ineludible. Motores veteranos monolíticos como Microsoft Access, los cuales bloquean archivos enteros a nivel de disco, son intrínsecamente incapaces de procesar este volumen transaccional sin incurrir en colisiones (*deadlocks*) sistémicas. Es por ello que la industria aboga por arquitecturas relacionales robustas, notablemente encarnadas por el motor InnoDB de *MySQL* (Oracle Corporation, 2023). Este motor implementa intrínsecamente las propiedades ACID (Atomicidad, Consistencia, Aislamiento y Durabilidad) y emplea mecanismos de bloqueo a nivel de fila (*row-level locking*), garantizando una orquestación transaccional segura y expedita apoyando así la normativa del *Consorcio ISC* (2020) sobre metodologías para el control concurrente.
+
+#### 2.2.2. Justificación de la Propuesta a Medida
+
+A pesar de la riqueza funcional que a priori ostentan los sistemas WMS comerciales y los modernos ERPs de gestión logística generalista, su adopción *out-of-the-box* (directamente del proveedor) resulta taxativamente ineficiente e inviable para la casuística particular del almacén de Santander gestionado para *James Hardie* (2023). 
+
+En primer lugar, los sistemas comerciales pecan de una excesiva genericidad, priorizando la trazabilidad financiera o volumétrica en detrimento de una representación visual espacial pura. La principal necesidad de la corporación radica en la visualización interactiva y dinámica del plano de planta (las 38 áreas), calculando asincrónicamente los porcentajes de saturación física. Integrar este requerimiento de visualización ad-hoc en un ERP comercial enlatado implicaría costes exorbitantes de personalización sobre código cerrado propietario.
+
+Adicionalmente, el núcleo operativo de la empresa se encuentra inmerso en una fase de transición metodológica con el incipiente desarrollo interno de "Rollship", un ecosistema programado en entorno *Laravel* (Taylor, 2021). Desplegar una aplicación de terceros crearía barreras perimetrales ("silos de información") difícilmente integrables con los flujos de *Rollship* (Abarza, 2018). Interconectar módulos *Laravel* nativos interinos con APIs de software propietario es un ejercicio redundante cuando puede abordarse construyendo un Módulo Logístico web autónomo, pero simbiótico con la arquitectura de la organización, promoviendo la consistencia global del sistema (Pressman & Maxim, 2020).
+
+Finalmente, el insalvable escollo de la migración del histórico relacional ("legacy") justifica, por sí solo, un diseño de software a medida (Sommerville, 2015; Masías Vergara, 2020). El salto evolutivo desde una tabla monolítica de MS Access hasta un modelo Entidad-Relación normalizado en *MySQL* requiere de procesos ETL (Extracción, Transformación y Carga) construidos ex profeso, con lógicas de validación cruzada para certificar que el patrimonio de datos de la empresa no sufre desincronización o corrupción alguna en el proceso. 
+
+Por consiguiente, el estado de la tecnología actual invalida la continuidad de las arquitecturas ofimáticas (Access) y de los trasiegos de registros en papel, pero a su vez desaconseja férreamente la incrustación forzosa de macro-herramientas externas. La respuesta de ingeniería óptima, tal y como se infiere de la literatura, estriba inexorablemente en el diseño completo e integración directa de un Módulo Logístico customizado que aúne una interfaz web de control de layout muy optimizada con el motor relacional de alta disponibilidad *MySQL*.
+
+### 2.3. Enunciado del Problema
 
 La problemática fundamental que justifica la realización de este proyecto de ingeniería radica en la obsolescencia e ineficiencia del actual proceso de gestión de inventario, sustentado en una base de datos Microsoft Access estática que no satisface las gigantescas demandas operativas del almacén de Santander.
 
@@ -41,7 +65,7 @@ Esta deficiencia estructural provoca las siguientes disfunciones, que configuran
 
 En definitiva, es perentorio diseñar, implementar y desplegar un Módulo Logístico web interactivo (soportado por motores de bases de datos relacionales estables con gestión concurrente) que consiga digitalizar completamente el mapa físico de ocupación del almacén, integrándose con el ecosistema de la nueva herramienta "Rollship" desarrollada en entorno Laravel, de cara a extinguir de una vez por todas la dependencia administrativa del sistema heredado y del papel.
 
-### 2.3. Hipótesis de Partida
+### 2.4. Hipótesis de Partida
 
 Todo proyecto de ingeniería de software debe erigirse sobre una premisa científico-tecnológica fundamental que encauce el desarrollo y permita medir empíricamente su tasa de éxito final. Teniendo como base la grave disfunción operativa y arquitectónica diagnosticada en el almacén de Santander, se enuncia la siguiente hipótesis de investigación y desarrollo:
 
@@ -49,15 +73,15 @@ Todo proyecto de ingeniería de software debe erigirse sobre una premisa cientí
 
 Para validar esta hipótesis en el mundo real, el presente Trabajo de Fin de Grado desglosará el esfuerzo de ingeniería en una serie de **objetivos secuenciales** (análisis de requisitos corporativos, diseño del modelado relacional-concurrente e implementación web), destinados a probar que la sistematización moderna de estas operativas logísticas no solo es viable tecnológicamente, sino que su implantación aporta un valor cualitativo y de trazabilidad irrefutable al ecosistema empresarial de "Rollship".
 
-### 2.4. Objetivos
+### 2.5. Objetivos
 
 A partir de la formulación del problema operativo y fundamentándose en la hipótesis descrita en el apartado anterior, se traza la meta principal de este Trabajo de Fin de Grado, así como los diferentes hitos parciales necesarios para alcanzarla metódicamente.
 
-#### 2.4.1. Objetivo General
+#### 2.5.1. Objetivo General
 
 El objetivo primordial de este Trabajo de Fin de Grado consiste en **diseñar, desarrollar e implementar un Sistema Web interactivo de Gestión de Almacén (WMS de plano gráfico) robusto, con concurrencia garantizada bajo tecnología relacional MySQL**. Este sistema debe ser capaz de digitalizar la renderización física de la nave (Layout), erradicar la contención (*deadlocks*) de la actual base de datos Access monolítica y proveer métricas de ocupación en tiempo real para optimizar de forma integral y móvil el flujo logístico de los más de 68.000 pallets operados anualmente por la compañía.
 
-#### 2.4.2. Objetivos Específicos
+#### 2.5.2. Objetivos Específicos
 
 Para garantizar la viabilidad empírica y constructiva del Objetivo General, el alcance del presente TFG se fragmenta metodológicamente en tres objetivos específicos de investigación y desarrollo, intrínsecamente acoplados al ciclo de vida formal de la ingeniería del software y mapeados progresivamente en los siguientes capítulos de la memoria:
 
@@ -71,7 +95,7 @@ Para garantizar la viabilidad empírica y constructiva del Objetivo General, el 
     Desarrollar, programar y ensamblar la primera iteración funcional (Producto Mínimo Viable o PMV) que integre la base de datos concurrente y la interfaz gráfica web en tiempo real, validando los requerimientos de diseño preestablecidos mediante pruebas de integración antes de un eventual vuelco o migración a un entorno de producción.
     *(Este objetivo práctico y de codificación se demostrará analíticamente en el **Capítulo 4** de la memoria).*
 
-### 2.5. Estructura del Proyecto y Metodología
+### 2.6. Estructura del Proyecto y Metodología
 
 La consecución de los ambiciosos objetivos descritos exige una aproximación metodológica rigurosa. Para orquestar el desarrollo de este Módulo Logístico Web, el TFG adopta de base un **enfoque metodológico de Ingeniería del Software Iterativo e Incremental**. Este ciclo de vida resulta idóneo frente a modelos tradicionales (como el Ciclo de Vida en Cascada), al permitir que la arquitectura de la base de datos MySQL y la interfaz de cliente web evolucionen orgánicamente mediante prototipos funcionales (MVP), mitigando los riesgos inherentes a sustituir el sistema Access obsoleto que, a día de hoy, soporta la operativa en producción del almacén.
 
