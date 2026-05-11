@@ -1,0 +1,17 @@
+# Dependencias
+backend/node_modules/
+frontend/node_modules/
+
+# Variables de entorno (contiene contraseñas)
+backend/.env
+
+# Build de Vite (no necesario, el frontend es vanilla)
+frontend/dist/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
