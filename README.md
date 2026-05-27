@@ -288,6 +288,8 @@ El almacén de **INTERMODAL SEA SOLUTIONS** en el puerto de Santander gestiona l
 
 ![Layout](docs/screenshots/layout.png)
 
+![Layout 2](docs/screenshots/layout2.png)
+
 ---
 
 ### Modal de sector — Lista de palés en tiempo real
