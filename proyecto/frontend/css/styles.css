@@ -307,25 +307,21 @@ tbody tr:last-child { border-bottom: none; }
 /* ── SECTOR MAP ──────────────────────────────────────────────── */
 .layout-page { display: flex; flex-direction: column; gap: 1.5rem; }
 
-.sector-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: .5rem;
-}
+/* Celda de sector */
 .sector-cell {
   border-radius: var(--radius);
   border: 2px solid rgba(0,0,0,.12);
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  cursor: pointer; padding: .5rem .25rem;
-  min-height: 68px;
+  cursor: pointer; padding: .45rem .2rem;
+  min-height: 62px; min-width: 62px;
   transition: transform .12s, box-shadow .12s;
   position: relative; overflow: hidden;
 }
-.sector-cell:hover { transform: scale(1.05); box-shadow: var(--shadow-lg); z-index: 2; }
-.sector-cell .s-code { font-weight: 700; font-size: .82rem; color: rgba(0,0,0,.8); }
-.sector-cell .s-occ  { font-size: .68rem; color: rgba(0,0,0,.65); font-weight: 500; }
-.sector-cell .s-pct  { font-size: .65rem; color: rgba(0,0,0,.55); }
+.sector-cell:hover { transform: scale(1.06); box-shadow: var(--shadow-lg); z-index: 2; }
+.sector-cell .s-code { font-weight: 700; font-size: .75rem; color: rgba(0,0,0,.8); }
+.sector-cell .s-occ  { font-size: .62rem; color: rgba(0,0,0,.65); font-weight: 500; }
+.sector-cell .s-pct  { font-size: .6rem; color: rgba(0,0,0,.55); }
 
 .sector-cell.s-libre   { background: #bbf7d0; border-color: #16a34a; }
 .sector-cell.s-bajo    { background: #d9f99d; border-color: #65a30d; }
@@ -334,6 +330,80 @@ tbody tr:last-child { border-bottom: none; }
 .sector-cell.s-critico { background: #fecaca; border-color: #dc2626; }
 .sector-cell.s-inactivo{ background: #f1f5f9; border-color: #cbd5e1; opacity: .55; cursor: default; }
 
+/* Cuarentena: borde rojo más marcado */
+.sector-cell.zona-cuarentena { border-width: 2px; border-style: dashed; }
+.sector-cell.zona-cuarentena.s-libre   { border-color: #f87171; }
+.sector-cell.zona-cuarentena.s-bajo    { border-color: #ef4444; }
+.sector-cell.zona-cuarentena.s-medio   { border-color: #dc2626; }
+.sector-cell.zona-cuarentena.s-critico { border-color: #991b1b; }
+
+/* ── NAVE PRINCIPAL: filas A-K ──────────────────────────────── */
+.almacen-nave {
+  display: flex; flex-direction: column; gap: .4rem;
+  padding: .5rem 0;
+  overflow-x: auto;
+}
+.almacen-fila {
+  display: flex; align-items: center; gap: .4rem;
+}
+.fila-label {
+  width: 24px; min-width: 24px;
+  font-weight: 800; font-size: .85rem;
+  color: var(--primary); text-align: center;
+  user-select: none;
+}
+.fila-sectores {
+  display: flex; flex-wrap: nowrap; gap: .35rem;
+}
+/* Hueco visual para sectores anulados (ej: E01-E07) */
+.sector-cell-gap {
+  min-width: 62px; min-height: 62px;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent, transparent 4px,
+    rgba(0,0,0,.04) 4px, rgba(0,0,0,.04) 8px
+  );
+  border: 1px dashed #cbd5e1;
+  border-radius: var(--radius);
+  flex-shrink: 0;
+}
+
+/* ── ZONA SUPERIOR: CrossDocking + Playas ───────────────────── */
+.zonas-superiores {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr;
+  gap: 1rem;
+  align-items: stretch;
+}
+.zona-card { padding: .75rem 1rem !important; }
+.zona-titulo {
+  font-size: .78rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .04em;
+  color: var(--text-muted); margin-bottom: .5rem;
+}
+.zona-sectores { display: flex; gap: .35rem; flex-wrap: nowrap; }
+.zona-info-text {
+  font-size: .8rem; color: var(--text-muted);
+  line-height: 1.5; padding-top: .25rem;
+}
+.zona-crossdocking  { border-top: 3px solid #0369a1; }
+.zona-playa-entrada { border-top: 3px solid #ca8a04; }
+.zona-playa-salida  { border-top: 3px solid #7c3aed; }
+
+/* ── CUARENTENA Y BUFFER ─────────────────────────────────────── */
+.zona-grid-q {
+  display: flex; flex-wrap: wrap; gap: .35rem; padding: .25rem 0;
+}
+.zona-grid-buf {
+  display: flex; gap: .35rem; padding: .25rem 0;
+}
+
+/* ── LEGACY: mantener compatibilidad con otras páginas ──────── */
+.sector-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: .5rem;
+}
 .sector-special-row {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

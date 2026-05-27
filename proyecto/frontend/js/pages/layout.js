@@ -1,5 +1,12 @@
 import { getLayout, getSectorDetalle } from '../api.js';
-import { openModal, closeModal, escHtml, sectorCls, badgePale, formatFecha, loadingHtml, emptyHtml } from '../ui.js';
+import { openModal, escHtml, sectorCls, badgePale, formatFecha, loadingHtml, emptyHtml } from '../ui.js';
+
+// Definición de filas del almacén real (almacenjh)
+const FILAS = ['A','B','C','D','E','F','G','H','J','K'];
+
+// Para la fila E, E01-E07 están anulados; E08-E10 son los activos.
+// Mostramos huecos vacíos en las posiciones 01-07 para mantener la alineación visual.
+const E_OFFSET = 7; // número de huecos antes de E08
 
 export async function render(container) {
   container.style.padding = '';
@@ -9,7 +16,7 @@ export async function render(container) {
     <div class="page-header flex-between">
       <div>
         <h1 class="page-title">🗺 Layout del Almacén</h1>
-        <p class="page-sub">Distribución de los 38 sectores · Semáforo de ocupación en tiempo real</p>
+        <p class="page-sub">Plano real · Sectores A–K · CrossDocking · Cuarentena · Buffer</p>
       </div>
       <button class="btn btn-outline btn-sm" id="btn-refresh">↻ Actualizar</button>
     </div>
@@ -33,12 +40,27 @@ async function loadLayout(container) {
   }
 
   const { sectores, resumen } = data;
-  const normales  = sectores.filter(s => !s.codigo.startsWith('ESP'));
-  const especiales = sectores.filter(s => s.codigo.startsWith('ESP'));
+
+  // Categorizar sectores por zona
+  const almacen      = sectores.filter(s => /^[A-KA-K]/.test(s.codigo) && !/^(Q|W|ZF)/.test(s.codigo));
+  const crossdocking = sectores.filter(s => s.codigo.startsWith('W'));
+  const cuarentena   = sectores.filter(s => s.codigo.startsWith('Q'));
+  const buffer       = sectores.filter(s => s.codigo.startsWith('ZF'));
+
+  // Agrupar almacén por letra de fila
+  const porFila = {};
+  FILAS.forEach(f => { porFila[f] = []; });
+  almacen.forEach(s => {
+    const letra = s.codigo.charAt(0);
+    if (porFila[letra]) porFila[letra].push(s);
+  });
+  // Ordenar sectores dentro de cada fila por número
+  FILAS.forEach(f => porFila[f].sort((a,b) => a.codigo.localeCompare(b.codigo)));
 
   contentEl.innerHTML = `
     <div class="layout-page">
-      <!-- Resumen global -->
+
+      <!-- ── KPIs globales ───────────────────────────────── -->
       <div class="grid grid-4">
         <div class="kpi-card">
           <div class="kpi-icon">📦</div>
@@ -55,9 +77,7 @@ async function loadLayout(container) {
           </div>
         </div>
         <div class="kpi-card">
-          <div class="kpi-icon ${resumen.ocupacion_global >= 90 ? 'warning' : resumen.ocupacion_global >= 70 ? 'accent' : 'success'}">
-            📊
-          </div>
+          <div class="kpi-icon ${resumen.ocupacion_global >= 90 ? 'warning' : resumen.ocupacion_global >= 70 ? 'accent' : 'success'}">📊</div>
           <div>
             <div class="kpi-value">${resumen.ocupacion_global}%</div>
             <div class="kpi-label">Ocupación global</div>
@@ -72,8 +92,8 @@ async function loadLayout(container) {
         </div>
       </div>
 
-      <!-- Leyenda -->
-      <div class="card" style="padding:1rem 1.5rem">
+      <!-- ── Leyenda ──────────────────────────────────────── -->
+      <div class="card" style="padding:.75rem 1.25rem">
         <div class="legend">
           <span class="legend-item"><span class="legend-dot" style="background:#bbf7d0;border:1px solid #16a34a"></span>Libre (0%)</span>
           <span class="legend-item"><span class="legend-dot" style="background:#d9f99d;border:1px solid #65a30d"></span>Bajo (&lt;50%)</span>
@@ -84,39 +104,98 @@ async function loadLayout(container) {
         </div>
       </div>
 
-      <!-- Grid sectores A-F (6x6) -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">Sectores A–F (Nave principal)</span>
+      <!-- ── Zona superior: CrossDocking + Playas ─────────── -->
+      <div class="zonas-superiores">
+        <!-- CrossDocking -->
+        <div class="card zona-card zona-crossdocking">
+          <div class="zona-titulo">⚓ CrossDocking</div>
+          <div class="zona-sectores">
+            ${crossdocking.map(s => sectorCell(s)).join('')}
+          </div>
         </div>
-        <div class="sector-grid" id="sector-grid">
-          ${normales.map(s => sectorCell(s)).join('')}
+        <!-- Entry Yard (estático, no es un sector WMS) -->
+        <div class="card zona-card zona-playa-entrada">
+          <div class="zona-titulo">🟡 Entry Yard Location</div>
+          <div class="zona-info-text">Zona de descarga de camiones.<br>Palés pendientes de ubicar.</div>
+        </div>
+        <!-- Departure Yard (estático) -->
+        <div class="card zona-card zona-playa-salida">
+          <div class="zona-titulo">🟣 Departure Yard Location</div>
+          <div class="zona-info-text">Zona de carga para expedición.<br>Palés preparados para embarque.</div>
         </div>
       </div>
 
-      <!-- Sectores especiales -->
-      ${especiales.length ? `
+      <!-- ── Nave principal: filas A-K ────────────────────── -->
       <div class="card">
         <div class="card-header">
-          <span class="card-title">Zonas especiales</span>
+          <span class="card-title">🏭 Nave Principal — Filas A–K</span>
+          <span class="text-muted" style="font-size:.8rem">${almacen.length} sectores</span>
         </div>
-        <div class="sector-special-row">
-          ${especiales.map(s => sectorCell(s)).join('')}
+        <div class="almacen-nave" id="sector-grid">
+          ${FILAS.map(f => renderFila(f, porFila[f])).join('')}
+        </div>
+      </div>
+
+      <!-- ── Cuarentena ────────────────────────────────────── -->
+      ${cuarentena.length ? `
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title" style="color:#b91c1c">🚫 Cuarentena</span>
+          <span class="text-muted" style="font-size:.8rem">${cuarentena.length} sectores</span>
+        </div>
+        <div class="zona-grid-q">
+          ${cuarentena.map(s => sectorCell(s, 'cuarentena')).join('')}
         </div>
       </div>` : ''}
+
+      <!-- ── Buffer ────────────────────────────────────────── -->
+      ${buffer.length ? `
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title" style="color:#a16207">🟡 Buffer</span>
+          <span class="text-muted" style="font-size:.8rem">${buffer.length} sectores</span>
+        </div>
+        <div class="zona-grid-buf">
+          ${buffer.map(s => sectorCell(s)).join('')}
+        </div>
+      </div>` : ''}
+
     </div>`;
 
-  // Attach click events to sector cells
+  // Eventos de clic en todos los sectores
   container.querySelectorAll('.sector-cell[data-id]').forEach(cell => {
     cell.addEventListener('click', () => openSectorDetail(cell.dataset.id, cell.dataset.codigo));
   });
 }
 
-function sectorCell(s) {
-  const cls  = sectorCls(s);
-  const libre = s.capacidad_max - s.ocupacion_actual;
+// Renderiza una fila completa (ej: fila A con A01-A11)
+function renderFila(letra, sectores) {
+  if (!sectores.length && letra !== 'E') return '';
+
+  // Para la fila E: insertar 7 huecos antes de E08 para mantener alineación visual
+  let cells = '';
+  if (letra === 'E') {
+    for (let i = 0; i < E_OFFSET; i++) {
+      cells += `<div class="sector-cell-gap"></div>`;
+    }
+  }
+  cells += sectores.map(s => sectorCell(s)).join('');
+
   return `
-    <div class="sector-cell ${cls}" data-id="${s.id}" data-codigo="${escHtml(s.codigo)}"
+    <div class="almacen-fila">
+      <div class="fila-label">${letra}</div>
+      <div class="fila-sectores">
+        ${cells}
+      </div>
+    </div>`;
+}
+
+// Genera el HTML de una celda de sector
+function sectorCell(s, zonaClass = '') {
+  const cls   = sectorCls(s);
+  const extra = zonaClass ? ` zona-${zonaClass}` : '';
+  return `
+    <div class="sector-cell ${cls}${extra}" data-id="${s.id}" data-codigo="${escHtml(s.codigo)}"
          title="${escHtml(s.nombre)} · ${s.ocupacion_actual}/${s.capacidad_max} palés (${s.porcentaje_ocupacion}%)">
       <span class="s-code">${escHtml(s.codigo)}</span>
       <span class="s-occ">${s.ocupacion_actual}/${s.capacidad_max}</span>
@@ -124,6 +203,7 @@ function sectorCell(s) {
     </div>`;
 }
 
+// Abre el modal de detalle de sector
 async function openSectorDetail(id, codigo) {
   openModal({
     title: `Sector ${codigo}`,
@@ -144,7 +224,7 @@ async function openSectorDetail(id, codigo) {
       <div class="flex-between mb-md">
         <div>
           <div style="font-size:1.1rem;font-weight:700;color:var(--primary)">${escHtml(sector.nombre)}</div>
-          <div class="text-muted">${sector.ocupacion_actual} de ${sector.capacidad_max} palés ocupados · ${libre} libres</div>
+          <div class="text-muted">${sector.ocupacion_actual} de ${sector.capacidad_max} palés · ${libre} libres</div>
         </div>
         <div style="text-align:right">
           <div style="font-size:1.5rem;font-weight:800;color:${color}">${pct}%</div>
