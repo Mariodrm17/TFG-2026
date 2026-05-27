@@ -208,6 +208,7 @@ Los diagramas de actividad detallan los flujos operativos con decisiones y bifur
 > Clic en cualquier sector para ver sus palés
 
 ![Layout Sectores](docs/screenshots/layout-sectores.png)
+![Layout Sectores](docs/screenshots/layout2-sectores.png)
 
 ---
 
