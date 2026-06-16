@@ -92,17 +92,34 @@ Metodología de elicitación: **Job Shadowing** en pista logística + entrevista
 
 ### 2.2 Modelo del dominio
 
-#### Diagrama de clases conceptuales
+#### Modelo de dominio (punto de partida conceptual)
+
+> Conceptos del negocio y sus relaciones, sin atributos ni tipos — el punto de partida del análisis (Larman, 2004). Fuente: `docs/analisis/modelo-dominio.uml`.
+
+![Modelo de Dominio](docs/analisis/modelo-dominio.png)
+
+| Entidad | Descripción |
+|---------|-------------|
+| `Almacen` | Recinto logístico completo (Santander) |
+| `Sector` | Área física de almacenaje con capacidad definida |
+| `Cliente` | James Hardie — propietario de la mercancía |
+| `Pale` | Unidad de mercancía con estado y código único |
+| `Operario` | Actor humano con credenciales y rol |
+| `Movimiento` | Registro transaccional ACID de cada operación |
+
+#### Diagrama de clases (refinamiento con atributos y tipos)
+
+> Mismas entidades y relaciones del modelo de dominio, ya refinadas con atributos, tipos e identificadores. Fuente: `docs/analisis/diagrama-clases.uml`.
 
 ![Diagrama de Clases del Dominio](docs/analisis/diagrama-clases.png)
 
 | Entidad | Descripción | Relaciones clave |
 |---------|-------------|-----------------|
-| `Almacen` | Recinto logístico completo (Santander) | 1 almacén → 118 sectores |
-| `Sector` | Área física de almacenaje con capacidad definida | 1 sector → 0..* palés |
-| `Palé` | Unidad de mercancía James Hardie; tiene estado y código único | Objeto de todo movimiento |
-| `Movimiento` | Registro transaccional ACID de cada operación | 1 palé → 1..* movimientos |
-| `Operario` | Actor humano con credenciales y rol | Notifica movimientos |
+| `Almacen` | Recinto logístico completo (Santander) | 1 almacén compone 1..* sectores (118 reales) |
+| `Sector` | Área física de almacenaje con capacidad definida | 1 sector aloja 0..* palés |
+| `Palé` | Unidad de mercancía James Hardie; tiene estado y código único | Origina 0..* movimientos |
+| `Movimiento` | Registro transaccional ACID de cada operación | Registrado por 1 operario |
+| `Operario` | Actor humano con credenciales y rol | Registra movimientos |
 | `Cliente` | James Hardie — propietario de la mercancía | 1 cliente por almacén |
 
 #### Diagrama de objetos (instantánea real)
