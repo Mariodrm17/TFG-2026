@@ -15,7 +15,7 @@
 
 #### Diagrama de clases conceptuales
 
-![Diagrama de Clases del Dominio](docs/analisis/diagrama-clases.png)
+![Diagrama de Clases del Dominio](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/diagrama-clases.png)
 
 | Entidad | Descripción | Relaciones clave |
 |---------|-------------|-----------------|
