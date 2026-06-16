@@ -3,9 +3,10 @@
 
 ## 1 Modelo del dominio
 
-#### Diagrama de clases conceptuales
+<div align="center">
 ![Diagrama de Clases del Dominio](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/modelo-de-dominio.png)
 
+#### Diagrama de clases conceptuales
 
 ![Diagrama de Clases del Dominio](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/diagrama-clases.png)
 
