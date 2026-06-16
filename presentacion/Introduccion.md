@@ -1,11 +1,6 @@
-## Capítulo 1 — Introducción y contexto
+## Introducción y contexto
 
-- [1.1 Problema operativo](#11-problema-operativo)
-- [1.2 Estado del arte](#12-estado-del-arte)
-- [1.3 Hipótesis y objetivos](#13-hipótesis-y-objetivos)
-- [1.4 Metodología](#14-metodología)
-
-### 1.1 Problema operativo
+### 1 Problema operativo
 
 El almacén de **INTERMODAL SEA SOLUTIONS** en el puerto de Santander gestiona la mercancía de **James Hardie** (planchas de fibrocemento con destino UK, Dinamarca y España). El sistema heredado era MS Access en un único PC de escritorio, con los siguientes problemas críticos:
 
@@ -19,14 +14,14 @@ El almacén de **INTERMODAL SEA SOLUTIONS** en el puerto de Santander gestiona l
 
 **Volumen real del almacén:** ~73.064 palés entrados / ~68.248 salidos en histórico · **118 sectores físicos** · **10.382 huecos de capacidad total**
 
-### 1.2 Estado del arte
+### 2 Estado del arte
 
 Se analizaron soluciones WMS comerciales (Wareventory), sistemas de automatización logística (Schneider Electric) y la literatura técnica sobre bases de datos ACID (InnoDB, Date 2004, Elmasri & Navathe 2016). La conclusión fue que una solución personalizada es la única opción viable dado que:
 - El cliente tiene restricción de integración con **Rollship** (ERP propietario en PHP/Laravel)
 - El sistema debe operar en red interna sin instalación en dispositivos
 - Los datos históricos del Access deben migrarse sin pérdida
 
-### 1.3 Hipótesis y objetivos
+### 3 Hipótesis y objetivos
 
 **Hipótesis:** Un módulo web transaccional sobre MySQL InnoDB elimina los deadlocks del Access y habilita el control multiusuario en tiempo real.
 
@@ -36,7 +31,7 @@ Se analizaron soluciones WMS comerciales (Wareventory), sistemas de automatizaci
 | O2 | Diseñar la arquitectura MVC y los modelos de datos | Cap. 3 |
 | O3 | Implementar y verificar el sistema funcional completo | Cap. 4 y 5 |
 
-### 1.4 Metodología
+### 4 Metodología
 
 Desarrollo **iterativo e incremental** en 3 sprints:
 - **Sprint 1:** UC-01, UC-02, UC-03, UC-09 (núcleo operativo)
