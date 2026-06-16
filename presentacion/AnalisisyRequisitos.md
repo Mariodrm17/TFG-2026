@@ -1,17 +1,7 @@
 # Análisis y requisitos
 
-## 1 Glosario
 
-| Término | Definición |
-|---------|-----------|
-| **Sector / Área Lógica** | Cada una de las 118 divisiones físicas de la pista logística pensadas para el acopio de palés |
-| **Palé (Goods)** | Elemento atómico indivisible de manipulación que contiene la manufactura de James Hardie |
-| **Deadlock** | Error grave en MS Access cuando múltiples terminales intentan inscribir un movimiento concurrente |
-| **Layout Virtual** | Plano web interactivo mapeado sobre el almacén físico con semáforos de saturación |
-| **Rollship** | ERP propietario en PHP/Laravel del cliente; el WMS debe integrarse con él vía API REST |
-| **Módulo Logístico Integrado** | El propio sistema WMS objeto de este TFG |
-
-## 2 Modelo del dominio
+## 1 Modelo del dominio
 
 #### Diagrama de clases conceptuales
 
@@ -48,7 +38,7 @@
 | **Incidencia** | Anomalía detectada, operación bloqueada | UC-08 Incidencia |
 | **Cancelado** | Expedición rechazada | Administrador |
 
-## 3 Requisitos
+## 2 Requisitos
 
 #### Restricciones impuestas por la empresa (Requisitos no funcionales)
 
@@ -74,7 +64,7 @@ Estos son los requisitos que **la empresa cliente impuso como restricciones no n
 | RS-06 | **Mantenibilidad** | Arquitectura MVC estricta · capas desacopladas · API REST |
 | RS-07 | **Integridad** | Transacciones ACID · InnoDB Row-Level Locking · rollback automático |
 
-## 4 Actores y casos de uso
+## 3 Actores y casos de uso
 
 #### Diagrama de contexto global del sistema
 
@@ -115,7 +105,7 @@ Estos son los requisitos que **la empresa cliente impuso como restricciones no n
 
 ![Estructura CdU include/extend](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/estructura-cdu.png)
 
-## 5 Catálogo y priorización MoSCoW
+## 4 Catálogo y priorización MoSCoW
 
 | ID | Nombre del caso de uso | Actor principal | MoSCoW | Iteración | Estado |
 |----|------------------------|-----------------|--------|-----------|--------|
@@ -132,7 +122,7 @@ Estos son los requisitos que **la empresa cliente impuso como restricciones no n
 | UC-11 | Gestionar usuarios del sistema | Administrador | Could | Sprint 2 | ✅ Implementado |
 | UC-12 | Consultar historial de palé | Operario / Admin | Should | Sprint 3 | ✅ Implementado |
 
-## 6 Detalle de casos de uso
+## 5 Detalle de casos de uso
 
 > Cada caso de uso incluye el **diagrama de actividad** (flujo de procesos para que el CdU sea un éxito) y la descripción textual.
 
