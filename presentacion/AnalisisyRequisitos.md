@@ -7,9 +7,15 @@
   
 [![Diagrama de Clases del Dominio](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/modelo-de-dominio.png)](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/modelo-de-dominio.png)
 
+</div>
+
 #### Diagrama de clases conceptuales
 
+<div align="center">
+
 ![Diagrama de Clases del Dominio](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/diagrama-clases.png)
+
+</div>
 
 | Entidad | Descripción | Relaciones clave |
 |---------|-------------|-----------------|
@@ -24,13 +30,21 @@
 
 > Operario Diego registra la entrada del palé JH-8819-A al sector B4 — operación real del almacén.
 
+<div align="center">
+
 ![Diagrama de Objetos](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/diagrama-objetos.png)
+
+</div>
 
 #### Diagrama de estados del palé
 
 > El ciclo de vida completo del palé desde recepción en muelle hasta expedición. Los **casos de uso del sistema son los que provocan cada transición de estado**.
 
+<div align="center">
+
 ![Diagrama de Estados](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/diagrama-estados.png)
+
+</div>
 
 | Estado | Descripción | UC que lo provoca |
 |--------|-------------|-------------------|
@@ -74,7 +88,11 @@ Estos son los requisitos que **la empresa cliente impuso como restricciones no n
 
 > El diagrama de contexto muestra todos los actores externos y cómo **los casos de uso navegan los estados del palé** desde Recepcionado hasta Expedido.
 
+<div align="center">
+
 ![Diagrama de Contexto](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/diagrama-contexto.png)
+
+</div>
 
 **Actores identificados:**
 
@@ -87,27 +105,47 @@ Estos son los requisitos que **la empresa cliente impuso como restricciones no n
 
 #### Diagrama general — visión global del sistema
 
+<div align="center">
+
 ![Casos de Uso — Visión General](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/caso-uso-general.png)
+
+</div>
 
 #### Actor: Operario de Pista
 
 > El actor es siempre el **punto de inicio** del caso de uso.
 
+<div align="center">
+
 ![CdU — Operario](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/caso-uso-operario.png)
+
+</div>
 
 #### Actor: Administrador
 
+<div align="center">
+
 ![CdU — Administrador](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/caso-uso-admin.png)
+
+</div>
 
 #### Actor: Motor Rollship (sistema externo James Hardie)
 
+<div align="center">
+
 ![CdU — MotorRollShip](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/caso-uso-motorrollship.png)
 
+</div>
+
 #### Modelos y relaciones entre casos de uso (include / extend)
+
+<div align="center">
 
 ![Modelos y Casos de Uso](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/modelos-y-casos-de-uso.png)
 
 ![Estructura CdU include/extend](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/estructura-cdu.png)
+
+</div>
 
 ## 4 Catálogo y priorización MoSCoW
 
@@ -147,7 +185,11 @@ Estos son los requisitos que **la empresa cliente impuso como restricciones no n
 
 **Diagrama de actividad — UC-01:**
 
+<div align="center">
+
 ![Actividad UC-01](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/actividad-uc01.png)
+
+</div>
 
 ---
 
@@ -164,7 +206,11 @@ Estos son los requisitos que **la empresa cliente impuso como restricciones no n
 
 **Diagrama de actividad — UC-02:**
 
+<div align="center">
+
 ![Actividad UC-02](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/actividad-uc02.png)
+
+</div>
 
 ---
 
@@ -180,7 +226,11 @@ Estos son los requisitos que **la empresa cliente impuso como restricciones no n
 
 **Diagrama de actividad — UC-04:**
 
+<div align="center">
+
 ![Actividad UC-04](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/actividad-uc04.png)
+
+</div>
 
 ---
 
@@ -190,7 +240,11 @@ Estos son los requisitos que **la empresa cliente impuso como restricciones no n
 
 **Diagrama de actividad — UC-05:**
 
+<div align="center">
+
 ![Actividad UC-05](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/actividad-uc05.png)
+
+</div>
 
 ---
 
@@ -200,7 +254,11 @@ Estos son los requisitos que **la empresa cliente impuso como restricciones no n
 
 **Diagrama de actividad — UC-06:**
 
+<div align="center">
+
 ![Actividad UC-06](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/actividad-uc06.png)
+
+</div>
 
 ---
 
@@ -210,6 +268,10 @@ Estos son los requisitos que **la empresa cliente impuso como restricciones no n
 
 **Diagrama de actividad — UC-08:**
 
+<div align="center">
+
 ![Actividad UC-08](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/actividad-uc08.png)
+
+</div>
 
 ---
