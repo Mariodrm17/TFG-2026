@@ -1,150 +1,99 @@
-## Arquitectura
-
-- [3.1 Clases de análisis (MVC)](#31-clases-de-análisis-mvc)
-- [3.2 Diagramas de secuencia](#32-diagramas-de-secuencia)
-- [3.3 Arquitectura del sistema](#33-arquitectura-del-sistema)
-- [3.4 Modelo de datos (ER)](#34-modelo-de-datos-er)
-- [3.5 Estructura de paquetes y navegación](#35-estructura-de-paquetes-y-navegación)
-
-### 3.1 Clases de análisis (MVC)
-
-> **Regla de derivación:** Vista = procesos de **invocar** o **presentar** algo · Controlador = el **caso de uso completo** · Modelo = derivado del **modelo del dominio** del Capítulo 2.
-
-![Clases de Análisis MVC](docs/diseno/clases-analisis.png)
-
-#### Clases Modelo — derivadas directamente del dominio
-
-| Clase Modelo | Entidad del dominio de origen | CdU en que participa |
-|---|---|---|
-| `Pale` | `Palé` del modelo del dominio | UC-01, UC-02, UC-04, UC-07, UC-08, UC-10, UC-12 |
-| `Sector` | `Sector` del modelo del dominio | UC-01, UC-02, UC-03, UC-04, UC-07 |
-| `Movimiento` | `Movimiento` del modelo del dominio | UC-01, UC-02, UC-04, UC-08, UC-12 |
-| `Mercancia` | Categoría de producto James Hardie | UC-01 |
-| `Usuario` | `Operario` del modelo del dominio (con credenciales) | UC-09, UC-11 |
-| `Incidencia` | Estado de anomalía del ciclo de vida del palé | UC-08 |
-
-#### Clases Vista — procesos de invocar y presentar
-
-| Clase Vista | Tipo | Función (invocar / presentar) |
-|---|---|---|
-| `IUPrincipalOperario` | Ventana principal | **Presenta** el layout y menú de operaciones al Operario |
-| `IUPrincipalAdministrador` | Ventana principal | **Presenta** panel completo con gestión total al Admin |
-| `IUFormEntradaPale` | Formulario | **Invoca** UC-01 · **Presenta** confirmación de entrada |
-| `IUFormSalidaPale` | Formulario | **Invoca** UC-02 · **Presenta** confirmación de salida |
-| `IUCardSector` | Tarjeta visual | **Presenta** semáforo de saturación (verde/ámbar/rojo) del sector |
-| `IUFormReubicacion` | Formulario | **Invoca** UC-04 · **Presenta** selector de sector destino |
-| `IUPanelEstadisticas` | Panel | **Invoca** UC-05 · **Presenta** KPIs y gráficas de flujo |
-| `IUVolcadoAccess` | Interfaz ETL | **Invoca** UC-06 · **Presenta** progreso de migración |
-| `IUBuscador` | Campo de búsqueda | **Invoca** UC-10 · **Presenta** palé localizado con su sector |
-| `IUPanelUsuarios` | Panel CRUD | **Invoca** UC-11 · **Presenta** listado y formularios de cuentas |
-| `IUHistorialPale` | Línea de tiempo | **Invoca** UC-12 · **Presenta** cronología de movimientos |
-| `IUFormIncidencia` | Formulario | **Invoca** UC-08 · **Presenta** registro de anomalía |
-| `IUFormLogin` | Pantalla auth | **Invoca** UC-09 · **Presenta** formulario de credenciales |
-| `IUConectorRollship` | Interfaz central | **Presenta** datos al ERP Rollship vía API REST (actor sistema) |
-
-#### Clases Controlador — una por caso de uso
-
-| Clase Controlador | CdU que gestiona | Responsabilidad principal |
-|---|---|---|
-| `ControladorEntradaPale` | UC-01 | Validar datos · `FOR UPDATE` de sector · persistir palé + movimiento ENTRADA en transacción ACID |
-| `ControladorSalidaPale` | UC-02 | Verificar estado · actualizar a Expedido · decrementar ocupación · registrar SALIDA |
-| `ControladorLayout` | UC-03 | Recuperar 118 sectores con saturación y código cromático del semáforo |
-| `ControladorReubicacion` | UC-04 | Doble `FOR UPDATE` (palé + sector destino) · mover palé · actualizar contadores · registrar REUBICACION |
-| `ControladorEstadisticas` | UC-05 | Agregar KPIs, movimientos por tipo/período, sectores más ocupados |
-| `ControladorMigracion` | UC-06 | Orquestar ETL: leer volcado Access · transformar · validar · cargar en MySQL |
-| `ControladorSaturacion` | UC-07 *(subflujo)* | Calcular `(ocupacion / capacidad) × 100` · determinar código cromático |
-| `ControladorIncidencia` | UC-08 | Registrar anomalía · cambiar estado palé a Incidencia · bloquear operaciones |
-| `ControladorAutenticacion` | UC-09 *(subflujo)* | Verificar bcrypt · generar JWT firmado con rol · precondición de todos los CdU |
-| `ControladorBusqueda` | UC-10 | Consulta LIKE por código de referencia en inventario activo |
-| `ControladorUsuarios` | UC-11 | CRUD de cuentas · unicidad de credencial · log de auditoría |
-| `ControladorHistorial` | UC-12 | Recuperar movimientos del palé ordenados cronológicamente |
-
-#### Clases de diseño — Backend (implementación)
-
-![Clases Backend](docs/diseno/clases-backend.png)
-
-#### Clases de diseño — Frontend (implementación)
-
-![Clases Frontend](docs/diseno/clases-frontend.png)
-
-### 3.2 Diagramas de secuencia
-
-> Los diagramas de secuencia muestran la interacción entre **Actor → Vista → Controlador → Modelo** para los casos de uso más representativos.
-
-#### UC-01 — Registrar entrada de palé
-
-![Secuencia UC-01](docs/diseno/seq-uc01.png)
-
-#### UC-02 — Registrar salida de palé
-
-![Secuencia UC-02](docs/diseno/seq-uc02.png)
-
-#### UC-03 — Consultar layout interactivo
-
-![Secuencia UC-03](docs/diseno/seq-uc03.png)
-
-#### UC-04 — Reubicar palé entre sectores
-
-![Secuencia UC-04](docs/diseno/seq-uc04.png)
-
-#### UC-09 — Autenticar usuario (JWT)
-
-![Secuencia UC-09](docs/diseno/seq-uc09.png)
-
-#### UC-10 — Buscar palé por referencia
-
-![Secuencia UC-10](docs/diseno/seq-uc10.png)
-
-#### UC-12 — Consultar historial de palé
-
-![Secuencia UC-12](docs/diseno/seq-uc12.png)
-
-### 3.3 Arquitectura del sistema
-
-#### Arquitectura en tres capas
-
-![Arquitectura tres capas](docs/diseno/arquitectura.png)
-
-| Capa | Tecnología | Justificación (RS que cubre) |
-|------|-----------|------------------------------|
-| **Presentación** | Vanilla JS · SPA hash routing · CSS Grid · HTML5 | Mobile-First sin build step (RS-04, RS-05) · sin instalación cliente (RS-E2) |
-| **Negocio** | Node.js 20 · Express 4 · JWT 8h · bcryptjs | API REST para Rollship (RS-E1) · stateless · RBAC 4 roles (RS-03) |
-| **Datos** | MySQL 8.0 · InnoDB · Row-Level Locking · Stored Procedures | ACID garantizado (RS-07) · sin deadlocks (RS-E3) · rendimiento < 1,5 s (RS-01) |
-
-#### Diagrama de despliegue
-
-![Diagrama de Despliegue](docs/diseno/despliegue.png)
-
-#### Diagrama de paquetes
-
-![Diagrama de Paquetes](docs/diseno/paquetes.png)
-
-#### Análisis de paquetes
-
-![Análisis de Paquetes](docs/diseno/analisis-paquetes.png)
-
-### 3.4 Modelo de datos (ER)
-
-![Modelo Entidad-Relación](docs/diseno/er-modelo.png)
-
-| Tabla | Derivación del dominio | Filas reales |
-|-------|------------------------|-------------|
-| `sectores` | ← `Sector` del dominio · 118 filas con capacidades reales | **118** |
-| `pales` | ← `Palé` del dominio · estado, sector, mercancía | **2.444** |
-| `movimientos` | ← `Movimiento` del dominio · historial ACID completo | **2.444+** |
-| `mercancia` | Catálogo productos James Hardie | **9** |
-| `usuarios` | ← `Operario` del dominio · bcrypt + JWT + rol | **4** |
-| `incidencias` | ← estado Incidencia del ciclo de vida del palé | — |
-| `migracion_access` | Staging ETL para datos del MS Access | — |
-
-**Stored procedures MySQL:** `sp_entrada_pale` · `sp_salida_pale` (garantía ACID transaccional)
-
-**Índices de rendimiento:** `idx_movimientos_fecha` · `idx_movimientos_tipo` · `idx_movimientos_pale`
-
-### 3.5 Estructura de paquetes y navegación
-
-#### Diagrama de navegación (frontend SPA)
-
-![Diagrama de Navegación](docs/diseno/navegacion.png)
+[1. Contexto](./Introduccion.md) | [2. Análisis y Requisitos](./AnalisisyRequisitos.md) | [3. Arquitectura](./Arquitectura.md) | [4. Demostración](#) | [5. Conclusiones](#)
 
 ---
+
+## 1. Caso de Uso en Acción: UC-01 Registrar Entrada de Palé
+
+<div align="center">
+
+![UI — Operaciones: Entrada de Palé](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/screenshots/tab-entrada.png)
+
+</div>
+
+<div align="center">
+
+![DSS — UC-01 Registrar Entrada de Palé](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/diseno/seq-uc01.png)
+
+</div>
+
+- **Controlador por Caso de Uso:** `ControladorEntradaPale` gestiona en exclusiva el flujo UC-01. La Vista solo invoca y presenta; el Modelo solo persiste — ninguna capa sobrepasa su responsabilidad.
+- **Bloqueo FOR UPDATE:** El sector se bloquea en exclusiva antes de verificar su capacidad. Este `SELECT … FOR UPDATE` es la solución directa al deadlock que bloqueaba jornadas enteras en el Access.
+- **Regla antifraude de timestamps:** La `fecha_hora` del movimiento la fija el servidor en el instante de la transacción ACID — nunca el cliente — garantizando la inmutabilidad del registro de auditoría.
+
+---
+
+## 2. Arquitectura MVC en Capas
+
+<div align="center">
+
+![Arquitectura del Sistema en Capas](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/diseno/arquitectura.png)
+
+</div>
+
+- **SPA sin framework:** Vanilla JS con hash routing (`#/layout`, `#/operaciones`, `#/inventario`) — cero dependencias en cliente, funciona en cualquier navegador del almacén sin instalación.
+- **Middleware JWT centralizado:** Toda ruta REST pasa por `verificarSesion(token)` antes de llegar al controlador. Un único punto de control RBAC; si el token es inválido o el rol insuficiente, la petición no llega al controlador.
+- **Un controlador por caso de uso:** 12 UC → 12 controladores independientes. Ningún controlador llama a otro — la lógica de cada UC está completamente encapsulada.
+
+| Capa | Tecnología | Requisito que cubre |
+|------|-----------|---------------------|
+| **Vista** (invocar · presentar) | Vanilla JS · SPA hash routing · CSS Grid | Mobile-First sin build step · RS-04 · RS-05 |
+| **Controlador** (un controlador por UC) | Node.js 20 · Express 4 · JWT 8h · bcryptjs | API REST para Rollship · RBAC 4 roles · RS-E1 · RS-03 |
+| **Modelo** (derivado del dominio) | MySQL 8.0 · InnoDB · Row-Level Locking | ACID garantizado · sin deadlocks · RS-07 · RS-E3 |
+
+<div align="center">
+
+![Clases de Análisis MVC](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/diseno/clases-analisis.png)
+
+</div>
+
+---
+
+## 3. Modelo Entidad-Relación y Transacción ACID
+
+<div align="center">
+
+![Modelo ER](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/diseno/er-modelo.png)
+
+</div>
+
+- **PALES como tabla central:** Todas las foreign keys convergen en `pales` — pivote entre `sectores`, `mercancia`, `movimientos` y `usuarios`. La integridad referencial de InnoDB impide borrar un palé con movimientos asociados.
+- **Doble FK sector en MOVIMIENTOS:** `sector_origen` + `sector_destino` registra la reubicación (UC-04) en una sola fila. El historial completo de un palé en UC-12 se obtiene con un `SELECT … WHERE pale_id = ? ORDER BY fecha_hora`.
+- **MIGRACION_ACCESS como tabla de staging:** Los datos del Access se importan en bruto como `datos_raw : json`, se procesan y se marcan `procesado = 1`. La migración ETL es idempotente — se puede relanzar sin duplicar registros.
+
+```sql
+-- ControladorEntradaPale — transacción ACID UC-01
+START TRANSACTION;
+
+  SELECT id, ocupacion_actual, capacidad_max
+    FROM sectores WHERE id = ? FOR UPDATE;       -- Row-Level Lock: bloqueo exclusivo del sector
+
+  INSERT INTO pales (codigo_ref, sector_id, mercancia_id, estado)
+    VALUES (?, ?, ?, 'emplazado');
+
+  INSERT INTO movimientos (pale_id, usuario_id, tipo, sector_destino, fecha_hora)
+    VALUES (LAST_INSERT_ID(), ?, 'entrada', ?, NOW());  -- timestamp del servidor
+
+  UPDATE sectores
+    SET ocupacion_actual = ocupacion_actual + 1
+    WHERE id = ?;
+
+COMMIT;  -- ROLLBACK automático si cualquier paso falla
+```
+
+---
+
+## 4. Vista: Layout Interactivo y Semáforo de Saturación
+
+<div align="center">
+
+![Layout Interactivo — UC-03](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/screenshots/layout.png)
+
+</div>
+
+- **Vista = invocar + presentar:** La SPA invoca `GET /api/sectores`, recibe el JSON de ocupación y colorea cada celda del grid de sectores sin recargar la página. Toda la lógica de negocio (cálculo, validación) vive en `ControladorLayout` y `ControladorSaturacion`.
+- **Semáforo de 5 niveles:** Libre (<60%) · Bajo (<75%) · Medio (<85%) · Alto (<95%) · Crítico (≥95%) — calculado sobre `ocupacion_actual / capacidad_max`. El operario ve el estado del sector antes de seleccionarlo para una entrada.
+- **Datos reales del almacén:** 2.444 palés activos · 10.382 huecos de capacidad total · 118 sectores activos · 23,5 % de ocupación global en el momento de las capturas de pantalla.
+
+---
+
+[1. Contexto](./Introduccion.md) | [2. Análisis y Requisitos](./AnalisisyRequisitos.md) | [3. Arquitectura](./Arquitectura.md) | [4. Demostración](#) | [5. Conclusiones](#)
