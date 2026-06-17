@@ -1,4 +1,4 @@
-[1. Contexto](./Introduccion.md) | [2. Análisis y Requisitos](./AnalisisyRequisitos.md) | [3. Arquitectura](./arquitectura.md) | [4. Demostración](#) | [5. Conclusiones](#)
+[1. Contexto](./Introduccion.md) | [2. Análisis y Requisitos](./AnalisisyRequisitos.md) | [3. Arquitectura](./Arquitectura.md) | [4. Demostración](#) | [5. Conclusiones](#)
 
 ---
 
