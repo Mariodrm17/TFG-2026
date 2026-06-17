@@ -43,14 +43,17 @@ Autor: Mario Del Río Merino
 
 <div align="center">
 
-![Contexto del Sistema](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/contexto-sistema.png)
+![Contexto del Sistema](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/modelo-de-dominio.png)
 
 </div>
 
-- **WMS web** sobre Node.js + Express — accesible desde cualquier navegador sin instalación en dispositivos.
-- **MySQL 8.0 InnoDB** reemplaza el Access eliminando deadlocks con Row-Level Locking y transacciones ACID.
-- **Rollship ERP** (James Hardie) consulta el layout del almacén vía API REST JSON, sin integración directa.
-- **Migración ETL** de los datos históricos del Access a MySQL mediante scripts Python (UC-06).
+---
+  Derivado del dominio real del almacén de Santander mediante **Job Shadowing** en pista logística.
+
+  - **Palé como entidad central:** Toda operación del sistema —entrada, salida, reubicación, incidencia— gira en torno al palé como unidad mínima de trazabilidad. No hay movimiento sin palé.
+  - **Movimiento como registro inmutable:** Cada operación genera un `Movimiento` persistido en transacción ACID. El historial nunca se borra; se consulta (UC-12) y audita.
+  - **Sector con capacidad propia:** No es un simple nombre de zona. Tiene ocupación real y un límite físico; el sistema calcula la saturación en cada escritura (UC-07) para evitar desbordamientos concurrentes.
+  - **Operario desacoplado de Cliente:** El trabajador de INTERMODAL (quien registra) y James Hardie (dueño de la mercancía) son entidades independientes — el modelo permite escalar a múltiples clientes sin tocar la lógica de operación.
 
 ---
 
