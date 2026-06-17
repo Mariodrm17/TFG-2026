@@ -2,97 +2,7 @@
 
 ---
 
-## 1. Modelo del Dominio
-
-<div align="center">
-
-![Modelo del Dominio](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/modelo-dominio.png)
-
-</div>
-
-Derivado del dominio real del almacén de Santander mediante **Job Shadowing** en pista logística.
-
-- **Palé como entidad central:** Toda operación del sistema —entrada, salida, reubicación, incidencia— gira en torno al palé como unidad mínima de trazabilidad. No hay movimiento sin palé.
-- **Movimiento como registro inmutable:** Cada operación genera un `Movimiento` persistido en transacción ACID. El historial nunca se borra; se consulta (UC-12) y audita.
-- **Sector con capacidad propia:** No es un simple nombre de zona. Tiene ocupación real y un límite físico; el sistema calcula la saturación en cada escritura (UC-07) para evitar desbordamientos concurrentes.
-- **Operario desacoplado de Cliente:** El trabajador de INTERMODAL (quien registra) y James Hardie (dueño de la mercancía) son entidades independientes — el modelo permite escalar a múltiples clientes sin tocar la lógica de operación.
-
-#### Diagrama de clases conceptuales
-
-<div align="center">
-
-![Diagrama de Clases](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/diagrama-clases.png)
-
-</div>
-
-| Entidad | Descripción | Relaciones clave |
-|---------|-------------|-----------------|
-| `Almacen` | Recinto logístico completo (Santander) | 1 almacén → 118 sectores |
-| `Sector` | Área física de almacenaje con capacidad definida | 1 sector → 0..* palés |
-| `Palé` | Unidad de mercancía James Hardie; tiene estado y código único | Objeto de todo movimiento |
-| `Movimiento` | Registro transaccional ACID de cada operación | 1 palé → 1..* movimientos |
-| `Operario` | Actor humano con credenciales y rol | Notifica movimientos |
-| `Cliente` | James Hardie — propietario de la mercancía | 1 cliente por almacén |
-
----
-
-## 2. Ciclo de Vida del Palé
-
-<div align="center">
-
-![Diagrama de Estados](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/diagrama-estados.png)
-
-</div>
-
-> Los **casos de uso del sistema son los que provocan cada transición de estado** — ningún estado cambia sin una operación registrada.
-
-- **Máquina de estados como contrato de negocio:** El palé solo puede estar en un estado a la vez; el sistema rechaza operaciones incoherentes (p.ej. sacar un palé en estado `Incidencia`).
-- **Trazabilidad total garantizada:** Cada transición persiste un `Movimiento` ACID, lo que permite reconstruir el historial completo en UC-12 sin ambigüedad.
-- **Estado `En reubicación` como salvaguarda de concurrencia:** Mientras la transacción de reubicación (UC-04) está abierta, el palé queda bloqueado para otras operaciones.
-
-| Estado | Descripción | UC que lo provoca |
-|--------|-------------|-------------------|
-| **Recepcionado** | En muelle, sin sector asignado | Descarga física |
-| **Emplazado** | Ubicado en sector con registro ACID | UC-01 Entrada palé |
-| **En reubicación** | En tránsito entre sectores | UC-04 Reubicar |
-| **En preparación** | Incluido en orden de expedición | UC-02 (flujo previo) |
-| **Expedido** | Fuera del almacén | UC-02 Salida palé |
-| **Incidencia** | Anomalía detectada, operación bloqueada | UC-08 Incidencia |
-| **Cancelado** | Expedición rechazada | Administrador |
-
----
-
-## 3. Requisitos del Sistema
-
-#### Restricciones impuestas por la empresa (no negociables)
-
-| ID | Restricción | Origen |
-|----|-------------|--------|
-| RS-E1 | Integración con Rollship mediante **API REST JSON** | James Hardie / INTERMODAL |
-| RS-E2 | Operación en **navegador web** sin instalación (tablets industriales) | INTERMODAL SEA SOLUTIONS |
-| RS-E3 | Base de datos **MySQL** (infraestructura WAMP64 ya disponible) | INTERMODAL SEA SOLUTIONS |
-| RS-E4 | Interfaz **mobile-first** · CTAs ≥ 60×60 px (uso con guantes) | Operarios de pista |
-| RS-E5 | Migración del **MS Access** a MySQL sin pérdida | James Hardie (auditoría) |
-
-#### Requisitos suplementarios FURPS+
-
-| ID | Requisito | Métrica |
-|----|-----------|---------|
-| RS-01 | **Rendimiento** | Layout < 1,5 s · escrituras < 2 s para 68.000 tx/año |
-| RS-02 | **Disponibilidad** | 99,5 % en horario operativo (07:00–20:00) |
-| RS-03 | **Seguridad** | JWT 8h · bcrypt · RBAC 4 roles |
-| RS-04 | **Usabilidad** | Botones ≥ 60×60 px · Mobile-First |
-| RS-05 | **Portabilidad** | Chrome / Firefox / Safari · sin cliente |
-| RS-06 | **Mantenibilidad** | MVC estricta · capas desacopladas · API REST |
-| RS-07 | **Integridad** | Transacciones ACID · InnoDB Row-Level Locking |
-
-- **Restricción tecnológica forzada:** MySQL no es una elección libre — la infraestructura WAMP64 ya estaba desplegada en la empresa. El diseño ACID se adapta a esa restricción.
-- **Mobile-first como requisito de negocio:** Los operarios trabajan en pista con tablets industriales y guantes. Los ≥ 60×60 px no son una recomendación de accesibilidad, son una exigencia operativa.
-- **ETL como requisito de auditoría:** James Hardie exige trazabilidad histórica completa; sin la migración del Access, el sistema no podría auditarse ante reclamaciones de mercancía.
-
----
-
-## 4. Identificación y Jerarquía de Actores
+## 1. Identificación y Jerarquía de Actores
 
 <div align="center">
 
@@ -106,7 +16,7 @@ Derivado del dominio real del almacén de Santander mediante **Job Shadowing** e
 
 ---
 
-## 5. Casos de Uso: Operativa de Pista
+## 2. Casos de Uso: Operativa de Pista
 
 <div align="center">
 
@@ -118,7 +28,7 @@ Derivado del dominio real del almacén de Santander mediante **Job Shadowing** e
 
 ---
 
-## 6. Casos de Uso: Administración y Sistema Externo
+## 3. Casos de Uso: Administración y Sistema Externo
 
 <div align="center">
 
@@ -138,7 +48,7 @@ Derivado del dominio real del almacén de Santander mediante **Job Shadowing** e
 
 ---
 
-## 7. Catálogo y Priorización MoSCoW
+## 4. Catálogo y Priorización MoSCoW
 
 | ID | Caso de uso | Actor | MoSCoW | Sprint | Estado |
 |----|-------------|-------|--------|--------|--------|
@@ -157,7 +67,7 @@ Derivado del dominio real del almacén de Santander mediante **Job Shadowing** e
 
 ---
 
-## 8. Detalle de Casos de Uso Clave
+## 5. Detalle de Casos de Uso Clave
 
 #### UC-01 — Registrar entrada de palé · Must · Sprint 1
 
