@@ -1,4 +1,4 @@
-## Capítulo 3 — Diseño del sistema
+## Arquitectura
 
 - [3.1 Clases de análisis (MVC)](#31-clases-de-análisis-mvc)
 - [3.2 Diagramas de secuencia](#32-diagramas-de-secuencia)
