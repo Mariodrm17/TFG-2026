@@ -1,0 +1,53 @@
+@startuml contexto-sistema
+skinparam shadowing false
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 13
+skinparam backgroundColor #FFFFFF
+skinparam nodesep 80
+skinparam ranksep 100
+
+title WMS Santander — Contexto del sistema
+
+skinparam actor {
+  BackgroundColor #D4EDDA
+  BorderColor #28A745
+  FontColor #155724
+  FontStyle bold
+}
+skinparam rectangle {
+  BackgroundColor #D0E8FF
+  BorderColor #0056B3
+  FontColor #003580
+  RoundCorner 10
+}
+skinparam database {
+  BackgroundColor #FFF3CD
+  BorderColor #856404
+  FontColor #533F03
+}
+skinparam node {
+  BackgroundColor #E2D9F3
+  BorderColor #6F42C1
+  FontColor #3D2174
+}
+skinparam ArrowColor #404040
+skinparam ArrowFontSize 11
+
+actor "Operario\nde Pista" as OP
+actor "Gerente /\nAdministrador" as AD
+
+rectangle "WMS — Modulo Logistico Web\nNode.js · Express · Vanilla JS SPA\nJWT 8h · RBAC 4 roles · 12 Casos de Uso" as WMS
+
+database "MySQL 8.0 InnoDB\n118 sectores · 2.444 pales activos\nACID · Row-Level Locking" as DB
+
+node "Rollship ERP\n(James Hardie — PHP/Laravel)" as ROLL
+
+node "MS Access Legacy\n(sistema heredado)" as ACCESS
+
+OP -down-> WMS : browser
+AD -down-> WMS : browser
+WMS -down-> DB : SQL transaccional
+WMS -right-> ROLL : GET /api/layout\n<<API REST JSON>>
+ACCESS -down-> WMS : migracion ETL\nUC-06 (unica vez)
+
+@enduml
