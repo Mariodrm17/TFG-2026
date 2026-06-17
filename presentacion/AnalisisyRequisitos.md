@@ -1,19 +1,27 @@
-# Análisis y requisitos
+[1. Contexto](./Introduccion.md) | [2. Análisis y Requisitos](./AnalisisyRequisitos.md) | [3. Arquitectura](#) | [4. Demostración](#) | [5. Conclusiones](#)
 
+---
 
-## 1 Modelo del dominio
+## 1. Modelo del Dominio
 
 <div align="center">
-  
-[![Diagrama de Clases del Dominio](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/modelo-de-dominio.png)](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/modelo-de-dominio.png)
+
+![Modelo del Dominio](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/modelo-dominio.png)
 
 </div>
+
+Derivado del dominio real del almacén de Santander mediante **Job Shadowing** en pista logística.
+
+- **Palé como entidad central:** Toda operación del sistema —entrada, salida, reubicación, incidencia— gira en torno al palé como unidad mínima de trazabilidad. No hay movimiento sin palé.
+- **Movimiento como registro inmutable:** Cada operación genera un `Movimiento` persistido en transacción ACID. El historial nunca se borra; se consulta (UC-12) y audita.
+- **Sector con capacidad propia:** No es un simple nombre de zona. Tiene ocupación real y un límite físico; el sistema calcula la saturación en cada escritura (UC-07) para evitar desbordamientos concurrentes.
+- **Operario desacoplado de Cliente:** El trabajador de INTERMODAL (quien registra) y James Hardie (dueño de la mercancía) son entidades independientes — el modelo permite escalar a múltiples clientes sin tocar la lógica de operación.
 
 #### Diagrama de clases conceptuales
 
 <div align="center">
 
-![Diagrama de Clases del Dominio](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/diagrama-clases.png)
+![Diagrama de Clases](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/diagrama-clases.png)
 
 </div>
 
@@ -26,19 +34,9 @@
 | `Operario` | Actor humano con credenciales y rol | Notifica movimientos |
 | `Cliente` | James Hardie — propietario de la mercancía | 1 cliente por almacén |
 
-#### Diagrama de objetos (instantánea real)
+---
 
-> Operario Diego registra la entrada del palé JH-8819-A al sector B4 — operación real del almacén.
-
-<div align="center">
-
-![Diagrama de Objetos](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/diagrama-objetos.png)
-
-</div>
-
-#### Diagrama de estados del palé
-
-> El ciclo de vida completo del palé desde recepción en muelle hasta expedición. Los **casos de uso del sistema son los que provocan cada transición de estado**.
+## 2. Ciclo de Vida del Palé
 
 <div align="center">
 
@@ -46,29 +44,35 @@
 
 </div>
 
+> Los **casos de uso del sistema son los que provocan cada transición de estado** — ningún estado cambia sin una operación registrada.
+
+- **Máquina de estados como contrato de negocio:** El palé solo puede estar en un estado a la vez; el sistema rechaza operaciones incoherentes (p.ej. sacar un palé en estado `Incidencia`).
+- **Trazabilidad total garantizada:** Cada transición persiste un `Movimiento` ACID, lo que permite reconstruir el historial completo en UC-12 sin ambigüedad.
+- **Estado `En reubicación` como salvaguarda de concurrencia:** Mientras la transacción de reubicación (UC-04) está abierta, el palé queda bloqueado para otras operaciones.
+
 | Estado | Descripción | UC que lo provoca |
 |--------|-------------|-------------------|
 | **Recepcionado** | En muelle, sin sector asignado | Descarga física |
-| **Emplazado** | Ubicado en un sector con registro ACID | UC-01 Entrada palé |
+| **Emplazado** | Ubicado en sector con registro ACID | UC-01 Entrada palé |
 | **En reubicación** | En tránsito entre sectores | UC-04 Reubicar |
 | **En preparación** | Incluido en orden de expedición | UC-02 (flujo previo) |
 | **Expedido** | Fuera del almacén | UC-02 Salida palé |
 | **Incidencia** | Anomalía detectada, operación bloqueada | UC-08 Incidencia |
 | **Cancelado** | Expedición rechazada | Administrador |
 
-## 2 Requisitos
+---
 
-#### Restricciones impuestas por la empresa (Requisitos no funcionales)
+## 3. Requisitos del Sistema
 
-Estos son los requisitos que **la empresa cliente impuso como restricciones no negociables** al equipo de ingeniería:
+#### Restricciones impuestas por la empresa (no negociables)
 
-| ID | Restricción de empresa | Origen |
-|----|------------------------|--------|
-| RS-E1 | La integración con Rollship debe realizarse mediante **API REST** (el ERP es PHP/Laravel y consume JSON) | James Hardie / INTERMODAL |
-| RS-E2 | El sistema debe operar en **navegador web** sin instalación en dispositivos (tablets industriales) | INTERMODAL SEA SOLUTIONS |
-| RS-E3 | La base de datos debe ser **MySQL** (infraestructura WAMP64 ya disponible en la empresa) | INTERMODAL SEA SOLUTIONS |
-| RS-E4 | La interfaz debe ser **mobile-first** y apta para uso con guantes (CTAs ≥ 60×60 px) | Operarios de pista |
-| RS-E5 | Los datos históricos del **MS Access** deben migrarse sin pérdida a MySQL | James Hardie (auditoría) |
+| ID | Restricción | Origen |
+|----|-------------|--------|
+| RS-E1 | Integración con Rollship mediante **API REST JSON** | James Hardie / INTERMODAL |
+| RS-E2 | Operación en **navegador web** sin instalación (tablets industriales) | INTERMODAL SEA SOLUTIONS |
+| RS-E3 | Base de datos **MySQL** (infraestructura WAMP64 ya disponible) | INTERMODAL SEA SOLUTIONS |
+| RS-E4 | Interfaz **mobile-first** · CTAs ≥ 60×60 px (uso con guantes) | Operarios de pista |
+| RS-E5 | Migración del **MS Access** a MySQL sin pérdida | James Hardie (auditoría) |
 
 #### Requisitos suplementarios FURPS+
 
@@ -76,52 +80,45 @@ Estos son los requisitos que **la empresa cliente impuso como restricciones no n
 |----|-----------|---------|
 | RS-01 | **Rendimiento** | Layout < 1,5 s · escrituras < 2 s para 68.000 tx/año |
 | RS-02 | **Disponibilidad** | 99,5 % en horario operativo (07:00–20:00) |
-| RS-03 | **Seguridad** | JWT 8h · bcrypt · RBAC 4 roles (visualizador/operario/gerente/admin) |
-| RS-04 | **Usabilidad** | Botones ≥ 60×60 px · apto con guantes · Mobile-First |
-| RS-05 | **Portabilidad** | Chrome / Firefox / Safari · sin instalación cliente |
-| RS-06 | **Mantenibilidad** | Arquitectura MVC estricta · capas desacopladas · API REST |
-| RS-07 | **Integridad** | Transacciones ACID · InnoDB Row-Level Locking · rollback automático |
+| RS-03 | **Seguridad** | JWT 8h · bcrypt · RBAC 4 roles |
+| RS-04 | **Usabilidad** | Botones ≥ 60×60 px · Mobile-First |
+| RS-05 | **Portabilidad** | Chrome / Firefox / Safari · sin cliente |
+| RS-06 | **Mantenibilidad** | MVC estricta · capas desacopladas · API REST |
+| RS-07 | **Integridad** | Transacciones ACID · InnoDB Row-Level Locking |
 
-## 3 Actores y casos de uso
+- **Restricción tecnológica forzada:** MySQL no es una elección libre — la infraestructura WAMP64 ya estaba desplegada en la empresa. El diseño ACID se adapta a esa restricción.
+- **Mobile-first como requisito de negocio:** Los operarios trabajan en pista con tablets industriales y guantes. Los ≥ 60×60 px no son una recomendación de accesibilidad, son una exigencia operativa.
+- **ETL como requisito de auditoría:** James Hardie exige trazabilidad histórica completa; sin la migración del Access, el sistema no podría auditarse ante reclamaciones de mercancía.
 
-#### Diagrama de contexto global del sistema
+---
 
-> El diagrama de contexto muestra todos los actores externos y cómo **los casos de uso navegan los estados del palé** desde Recepcionado hasta Expedido.
-
-<div align="center">
-
-![Diagrama de Contexto](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/diagrama-contexto.png)
-
-</div>
-
-**Actores identificados:**
-
-| Actor | Tipo | Interacción |
-|-------|------|-------------|
-| **Operario de Pista** | Principal humano | UC-01, UC-02, UC-03, UC-04, UC-08, UC-10, UC-12 |
-| **Administrador** | Humano privilegiado | Todos los UC + UC-05, UC-06, UC-11 |
-| **Motor Rollship** | Sistema externo (James Hardie ERP) | UC-03 (consulta layout vía API) |
-| **MS Access Legacy** | Sistema externo transitorio | UC-06 (fuente de datos ETL) |
-
-#### Diagrama general — visión global del sistema
+## 4. Identificación y Jerarquía de Actores
 
 <div align="center">
 
-![Casos de Uso — Visión General](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/caso-uso-general.png)
+![Diagrama de Contexto General](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/caso-uso-general.png)
 
 </div>
 
-#### Actor: Operario de Pista
+- **RBAC con 4 roles:** visualizador → operario → gerente → administrador. Cada nivel hereda los permisos del anterior; ningún rol accede a funciones fuera de su ámbito sin escalada explícita.
+- **Actor humano vs. sistema externo:** Rollship ERP actúa como actor automatizado — no tiene sesión JWT, interactúa exclusivamente vía API REST con una clave de API fija.
+- **Actor externo transitorio:** MS Access Legacy solo aparece como fuente de datos en UC-06 (migración ETL, operación única); tras la migración, queda eliminado del flujo operativo.
 
-> El actor es siempre el **punto de inicio** del caso de uso.
+---
+
+## 5. Casos de Uso: Operativa de Pista
 
 <div align="center">
 
-![CdU — Operario](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/caso-uso-operario.png)
+![CdU — Operario de Pista](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/caso-uso-operario.png)
 
 </div>
 
-#### Actor: Administrador
+- **Operario de Pista (Carga Operativa):** 6 casos de uso directos — entrada, salida, layout, reubicación, búsqueda e historial. UC-07 (saturación) y UC-09 (auth) son subflujos automáticos `<<include>>`; UC-08 (incidencia) se activa solo si algo sale mal `<<extend>>`.
+
+---
+
+## 6. Casos de Uso: Administración y Sistema Externo
 
 <div align="center">
 
@@ -129,61 +126,49 @@ Estos son los requisitos que **la empresa cliente impuso como restricciones no n
 
 </div>
 
-#### Actor: Motor Rollship (sistema externo James Hardie)
+- **Administrador (Control Total):** Hereda todos los UC del Operario y añade UC-05 (estadísticas de flujo), UC-06 (migración ETL Access→MySQL) y UC-11 (gestión de usuarios). Es el único rol con acceso al panel de datos históricos.
 
 <div align="center">
 
-![CdU — MotorRollShip](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/caso-uso-motorrollship.png)
+![CdU — Motor Rollship](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/caso-uso-motorrollship.png)
 
 </div>
 
-#### Modelos y relaciones entre casos de uso (include / extend)
-
-<div align="center">
-
-![Modelos y Casos de Uso](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/modelos-y-casos-de-uso.png)
-
-![Estructura CdU include/extend](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/estructura-cdu.png)
-
-</div>
-
-## 4 Catálogo y priorización MoSCoW
-
-| ID | Nombre del caso de uso | Actor principal | MoSCoW | Iteración | Estado |
-|----|------------------------|-----------------|--------|-----------|--------|
-| UC-01 | Registrar entrada de palé | Operario / Admin | **Must** | Sprint 1 | ✅ Implementado |
-| UC-02 | Registrar salida de palé | Operario / Admin | **Must** | Sprint 1 | ✅ Implementado |
-| UC-03 | Consultar layout interactivo | Operario / Admin / Rollship | **Must** | Sprint 1 | ✅ Implementado |
-| UC-04 | Reubicar palé entre sectores | Operario / Admin | **Must** | Sprint 2 | ✅ Implementado |
-| UC-05 | Consultar estadísticas de flujo | Administrador | Should | Sprint 3 | ✅ Implementado |
-| UC-06 | Migrar datos legado (ETL Access→MySQL) | Administrador | Should | Sprint 2 | ✅ Scripts incluidos |
-| UC-07 | Calcular saturación de sector | Sistema (subflujo) | **Must** | Sprint 1 | ✅ Subflujo en UC-01/03 |
-| UC-08 | Registrar incidencia operativa | Operario / Admin | Should | Sprint 2 | ✅ Implementado |
-| UC-09 | Autenticar usuario (JWT) | Todos los actores | **Must** | Sprint 1 | ✅ Implementado |
-| UC-10 | Buscar palé por referencia | Operario / Admin | Should | Sprint 2 | ✅ Implementado |
-| UC-11 | Gestionar usuarios del sistema | Administrador | Could | Sprint 2 | ✅ Implementado |
-| UC-12 | Consultar historial de palé | Operario / Admin | Should | Sprint 3 | ✅ Implementado |
-
-## 5 Detalle de casos de uso
-
-> Cada caso de uso incluye el **diagrama de actividad** (flujo de procesos para que el CdU sea un éxito) y la descripción textual.
+- **Motor Rollship (Actor Automatizado):** Solo tiene acceso a UC-03 (layout interactivo) vía API REST. No autenticado por JWT — consume el endpoint público de ocupación de sectores para sincronizar con el ERP de James Hardie.
 
 ---
 
-#### UC-01 — Registrar entrada de palé
+## 7. Catálogo y Priorización MoSCoW
 
-**Actor:** Operario de Pista · **Prioridad:** Must · **Estado:** ✅
+| ID | Caso de uso | Actor | MoSCoW | Sprint | Estado |
+|----|-------------|-------|--------|--------|--------|
+| UC-01 | Registrar entrada de palé | Operario / Admin | **Must** | 1 | ✅ |
+| UC-02 | Registrar salida de palé | Operario / Admin | **Must** | 1 | ✅ |
+| UC-03 | Consultar layout interactivo | Operario / Admin / Rollship | **Must** | 1 | ✅ |
+| UC-04 | Reubicar palé entre sectores | Operario / Admin | **Must** | 2 | ✅ |
+| UC-05 | Consultar estadísticas de flujo | Administrador | Should | 3 | ✅ |
+| UC-06 | Migrar datos legado (ETL Access→MySQL) | Administrador | Should | 2 | ✅ Scripts |
+| UC-07 | Calcular saturación de sector | Sistema (subflujo) | **Must** | 1 | ✅ |
+| UC-08 | Registrar incidencia operativa | Operario / Admin | Should | 2 | ✅ |
+| UC-09 | Autenticar usuario (JWT) | Todos los actores | **Must** | 1 | ✅ |
+| UC-10 | Buscar palé por referencia | Operario / Admin | Should | 2 | ✅ |
+| UC-11 | Gestionar usuarios del sistema | Administrador | Could | 2 | ✅ |
+| UC-12 | Consultar historial de palé | Operario / Admin | Should | 3 | ✅ |
+
+---
+
+## 8. Detalle de Casos de Uso Clave
+
+#### UC-01 — Registrar entrada de palé · Must · Sprint 1
 
 | | |
 |--|--|
-| **Precondiciones** | Usuario autenticado con rol ≥ Operario · mercancía físicamente en muelle · sector destino con capacidad libre |
-| **Flujo normal** | 1. Operario accede al layout → 2. Selecciona sector verde → 3. Introduce código referencia del palé → 4. Sistema valida capacidad con `FOR UPDATE` (bloqueo de fila) → 5. Persiste palé + movimiento ENTRADA en transacción ACID → 6. Actualiza semáforo de saturación → 7. Muestra confirmación |
-| **Excepción A1** | Sector alcanza capacidad límite concurrentemente → sistema rechaza con "Capacidad Máxima Superada" |
-| **Excepción A2** | Código de referencia ya existe en sistema activo → alerta de duplicado |
-| **Postcondiciones** | Palé en estado **Emplazado** · ocupación del sector incrementada · movimiento ENTRADA registrado en `movimientos` |
+| **Precondiciones** | Usuario autenticado · mercancía en muelle · sector destino con capacidad libre |
+| **Flujo normal** | 1. Accede al layout → 2. Selecciona sector verde → 3. Introduce código referencia → 4. Sistema valida capacidad con `FOR UPDATE` → 5. Persiste palé + movimiento ENTRADA en transacción ACID → 6. Actualiza semáforo de saturación |
+| **Excepción A1** | Sector alcanza capacidad concurrentemente → rechaza con "Capacidad Máxima Superada" |
+| **Excepción A2** | Código ya existe en sistema activo → alerta de duplicado |
+| **Postcondiciones** | Palé en estado **Emplazado** · movimiento ENTRADA registrado |
 | **Include** | UC-07 Calcular saturación · UC-09 Autenticación |
-
-**Diagrama de actividad — UC-01:**
 
 <div align="center">
 
@@ -193,18 +178,14 @@ Estos son los requisitos que **la empresa cliente impuso como restricciones no n
 
 ---
 
-#### UC-02 — Registrar salida de palé
-
-**Actor:** Operario de Pista · **Prioridad:** Must · **Estado:** ✅
+#### UC-02 — Registrar salida de palé · Must · Sprint 1
 
 | | |
 |--|--|
 | **Precondiciones** | Palé en estado Emplazado o En preparación · orden de expedición autorizada |
-| **Flujo normal** | 1. Operario busca palé por código → 2. Sistema verifica estado válido → 3. Operario confirma salida → 4. Sistema actualiza palé a **Expedido** · decrementa ocupación del sector · registra movimiento SALIDA |
+| **Flujo normal** | 1. Busca palé por código → 2. Verifica estado válido → 3. Confirma salida → 4. Actualiza palé a **Expedido** · decrementa ocupación · registra movimiento SALIDA |
 | **Excepción** | Palé ya expedido o en estado Incidencia → operación rechazada |
 | **Postcondiciones** | Palé en estado **Expedido** · sector liberado · trazabilidad completa |
-
-**Diagrama de actividad — UC-02:**
 
 <div align="center">
 
@@ -214,17 +195,13 @@ Estos son los requisitos que **la empresa cliente impuso como restricciones no n
 
 ---
 
-#### UC-04 — Reubicar palé entre sectores
-
-**Actor:** Operario de Pista · **Prioridad:** Must · **Estado:** ✅
+#### UC-04 — Reubicar palé entre sectores · Must · Sprint 2
 
 | | |
 |--|--|
 | **Precondiciones** | Palé en estado Emplazado · sector destino con capacidad libre |
-| **Flujo normal** | 1. Operario localiza palé → 2. Selecciona sector destino → 3. Sistema bloquea palé + sector destino simultáneamente (doble `FOR UPDATE`) → 4. Transfiere palé · actualiza contadores de ambos sectores · registra movimiento REUBICACION |
-| **Postcondiciones** | Palé en estado **Emplazado** en nuevo sector · historial de la reubicación conservado |
-
-**Diagrama de actividad — UC-04:**
+| **Flujo normal** | 1. Localiza palé → 2. Selecciona sector destino → 3. Sistema bloquea palé + sector destino simultáneamente (doble `FOR UPDATE`) → 4. Transfiere palé · actualiza contadores de ambos sectores · registra movimiento REUBICACION |
+| **Postcondiciones** | Palé **Emplazado** en nuevo sector · historial de la reubicación conservado |
 
 <div align="center">
 
@@ -234,44 +211,4 @@ Estos son los requisitos que **la empresa cliente impuso como restricciones no n
 
 ---
 
-#### UC-05 — Consultar estadísticas de flujo
-
-**Actor:** Administrador · **Prioridad:** Should · **Estado:** ✅
-
-**Diagrama de actividad — UC-05:**
-
-<div align="center">
-
-![Actividad UC-05](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/actividad-uc05.png)
-
-</div>
-
----
-
-#### UC-06 — Migrar datos legado (Access → MySQL)
-
-**Actor:** Administrador · **Prioridad:** Should · **Estado:** ✅ (scripts incluidos)
-
-**Diagrama de actividad — UC-06:**
-
-<div align="center">
-
-![Actividad UC-06](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/actividad-uc06.png)
-
-</div>
-
----
-
-#### UC-08 — Registrar incidencia operativa
-
-**Actor:** Operario / Administrador · **Prioridad:** Should · **Estado:** ✅
-
-**Diagrama de actividad — UC-08:**
-
-<div align="center">
-
-![Actividad UC-08](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/actividad-uc08.png)
-
-</div>
-
----
+[1. Contexto](./Introduccion.md) | [2. Análisis y Requisitos](./AnalisisyRequisitos.md) | [3. Arquitectura](#) | [4. Demostración](#) | [5. Conclusiones](#)
