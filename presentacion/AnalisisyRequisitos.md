@@ -63,7 +63,7 @@
 
 <div align="center">
 
-![Actividad UC-01](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/actividad-uc01.png)
+![Actividad UC-01](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/diseno/seq-uc01.png)
 
 </div>
 
@@ -80,7 +80,7 @@
 
 <div align="center">
 
-![Actividad UC-02](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/actividad-uc02.png)
+![Actividad UC-02](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/diseno/seq-uc02.png)
 
 </div>
 
@@ -96,7 +96,7 @@
 
 <div align="center">
 
-![Actividad UC-04](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/actividad-uc04.png)
+![Actividad UC-04](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/diseno/seq-uc04.png)
 
 </div>
 
