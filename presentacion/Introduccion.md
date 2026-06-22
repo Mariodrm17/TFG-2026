@@ -4,7 +4,7 @@
 
 <div align="center">
 
-![](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/sreenshots/imagen-barco.png)
+![Imagen barco](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/screenshots/imagen-barco.png)
 
 ## Sistema WMS para la gestión logística<br/>del almacén de Santander
 
