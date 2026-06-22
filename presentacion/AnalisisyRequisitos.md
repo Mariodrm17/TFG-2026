@@ -48,26 +48,7 @@
 
 ---
 
-## 4. Catálogo y Priorización MoSCoW
-
-| ID | Caso de uso | Actor | MoSCoW | Sprint | Estado |
-|----|-------------|-------|--------|--------|--------|
-| UC-01 | Registrar entrada de palé | Operario / Admin | **Must** | 1 | ✅ |
-| UC-02 | Registrar salida de palé | Operario / Admin | **Must** | 1 | ✅ |
-| UC-03 | Consultar layout interactivo | Operario / Admin / Rollship | **Must** | 1 | ✅ |
-| UC-04 | Reubicar palé entre sectores | Operario / Admin | **Must** | 2 | ✅ |
-| UC-05 | Consultar estadísticas de flujo | Administrador | Should | 3 | ✅ |
-| UC-06 | Migrar datos legado (ETL Access→MySQL) | Administrador | Should | 2 | ✅ Scripts |
-| UC-07 | Calcular saturación de sector | Sistema (subflujo) | **Must** | 1 | ✅ |
-| UC-08 | Registrar incidencia operativa | Operario / Admin | Should | 2 | ✅ |
-| UC-09 | Autenticar usuario (JWT) | Todos los actores | **Must** | 1 | ✅ |
-| UC-10 | Buscar palé por referencia | Operario / Admin | Should | 2 | ✅ |
-| UC-11 | Gestionar usuarios del sistema | Administrador | Could | 2 | ✅ |
-| UC-12 | Consultar historial de palé | Operario / Admin | Should | 3 | ✅ |
-
----
-
-## 5. Detalle de Casos de Uso Clave
+## 4. Detalle de Casos de Uso Clave
 
 #### UC-01 — Registrar entrada de palé · Must · Sprint 1
 
