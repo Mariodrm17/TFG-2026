@@ -96,7 +96,7 @@ Metodología de elicitación: **Job Shadowing** en pista logística + entrevista
 
 > Conceptos del negocio y sus relaciones, sin atributos ni tipos — el punto de partida del análisis (Larman, 2004). Fuente: `docs/analisis/modelo-dominio.uml`.
 
-![Modelo de Dominio](docs/analisis/modelo-dominio.png)
+![Modelo de Dominio](docs/analisis/modelo-de-dominio.png)
 
 | Entidad | Descripción |
 |---------|-------------|
