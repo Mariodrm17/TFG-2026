@@ -34,6 +34,7 @@ Autor: Mario Del Río Merino
 | Sin mapa visual de ocupación | Gestión por hojas Excel desactualizadas |
 | Sin trazabilidad de movimientos | Imposible auditar entradas/salidas |
 | Sin control de roles | Cualquier usuario modifica cualquier registro |
+| Sin posibilidad de modificar | El operario requiere cambiar datos |
 
 **Volumen real del almacén:** ~73.064 palés entrados · ~68.248 salidos · **118 sectores físicos** · **10.382 huecos de capacidad total**
 
