@@ -4,7 +4,7 @@
 
 <div align="center">
 
-<img src="https://intermodalss.com/wp-content/uploads/2024/12/intermodal-sea-solutions-home.jpg" alt="Intermodal Sea Solutions" width="500"/>
+![](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/analisis/sreenshots/imagen-barco.png)
 
 ## Sistema WMS para la gestión logística<br/>del almacén de Santander
 
