@@ -28,10 +28,10 @@
 
 **Hipótesis verificada:** El módulo web transaccional sobre MySQL InnoDB elimina los deadlocks del Access y habilita el control multiusuario en tiempo real.
 
-- **ACID sobre InnoDB:** Cero bloqueos de jornada en producción. El `SELECT … FOR UPDATE` resuelve exactamente el deadlock que paralizaba el almacén con MS Access.
-- **MVC estricta derivada del dominio:** 12 controladores independientes, Vista = invocar/presentar, Modelo derivado de las 6 entidades del dominio — la arquitectura es trazable desde el modelo conceptual hasta el código.
-- **Trazabilidad total garantizada:** ~73.064 palés del histórico del Access migrados y auditables en MySQL. Cualquier operación pasada es reconstruible cronológicamente con UC-12.
-- **RBAC 4 roles verificado:** visualizador · operario · gerente · administrador — ningún rol accede a funciones fuera de su ámbito; la escalada de privilegios es imposible sin credenciales.
+- **Sistema multiusuario en tiempo real:** El WMS elimina la restricción de un único PC de escritorio — múltiples operarios trabajan simultáneamente desde cualquier dispositivo con navegador, sin bloqueos ni colisiones de datos.
+- **Layout interactivo:** El mapa visual de 118 sectores con semáforo de saturación sustituye las hojas Excel desactualizadas — el operario conoce la ocupación real del almacén sin necesidad de desplazarse físicamente.
+- **Trazabilidad completa:** Cada entrada, salida, reubicación e incidencia queda registrada de forma inmutable en base de datos — cualquier movimiento pasado es auditable cronológicamente con UC-12.
+- **Gestión de modificaciones del operario:** Las funciones de edición detectadas como necesidad del cliente durante las entrevistas quedan resueltas en la aplicación web, dentro de los límites del rol correspondiente.
 
 ---
 
@@ -40,7 +40,7 @@
 **Evolución del Sistema WMS Santander**
 
 - **Notificaciones en tiempo real:** Actualmente Rollship consulta el layout por petición; en el futuro podría recibir eventos push vía WebSockets cuando un sector cambia de estado de saturación.
-- **Escáner de código de barras / QR:** Sustituir la introducción manual del código de referencia por lectura de QR con la cámara del dispositivo — reduce errores de transcripción en pista.
+- **Integración de pistolas de escáner:** Conectar lectores de código de barras por USB o Bluetooth al dispositivo del operario para que la introducción del código de referencia sea automática al apuntar al palé — elimina errores de transcripción y acelera las operaciones en pista.
 - **Multi-almacén:** El modelo del dominio (`Almacen → Sector → Palé`) ya contempla múltiples almacenes; la capa de datos y el frontend necesitarían extenderse para una futura expansión de INTERMODAL.
 - **App PWA con acceso offline:** Versión Progressive Web App que permita registrar entradas/salidas sin conexión y sincronizar al recuperar red — crítico para zonas del muelle con cobertura intermitente.
 
