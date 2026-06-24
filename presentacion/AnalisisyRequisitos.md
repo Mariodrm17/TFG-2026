@@ -69,23 +69,6 @@
 
 ---
 
-#### UC-02 — Registrar salida de palé · Must · Sprint 1
-
-| | |
-|--|--|
-| **Precondiciones** | Palé en estado Emplazado o En preparación · orden de expedición autorizada |
-| **Flujo normal** | 1. Busca palé por código → 2. Verifica estado válido → 3. Confirma salida → 4. Actualiza palé a **Expedido** · decrementa ocupación · registra movimiento SALIDA |
-| **Excepción** | Palé ya expedido o en estado Incidencia → operación rechazada |
-| **Postcondiciones** | Palé en estado **Expedido** · sector liberado · trazabilidad completa |
-
-<div align="center">
-
-![Actividad UC-02](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/diseno/seq-uc02.png)
-
-</div>
-
----
-
 #### UC-04 — Reubicar palé entre sectores · Must · Sprint 2
 
 | | |
