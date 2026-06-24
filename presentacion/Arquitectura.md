@@ -2,27 +2,7 @@
 
 ---
 
-## 1. Caso de Uso en Acción: UC-01 Registrar Entrada de Palé
-
-<div align="center">
-
-![UI — Operaciones: Entrada de Palé](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/screenshots/tab-entrada.png)
-
-</div>
-
-<div align="center">
-
-![DSS — UC-01 Registrar Entrada de Palé](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/diseno/seq-uc01.png)
-
-</div>
-
-- **Controlador por Caso de Uso:** `ControladorEntradaPale` gestiona en exclusiva el flujo UC-01. La Vista solo invoca y presenta; el Modelo solo persiste — ninguna capa sobrepasa su responsabilidad.
-- **Bloqueo FOR UPDATE:** El sector se bloquea en exclusiva antes de verificar su capacidad. Este `SELECT … FOR UPDATE` es la solución directa al deadlock que bloqueaba jornadas enteras en el Access.
-- **Regla antifraude de timestamps:** La `fecha_hora` del movimiento la fija el servidor en el instante de la transacción ACID — nunca el cliente — garantizando la inmutabilidad del registro de auditoría.
-
----
-
-## 2. Arquitectura MVC en Capas
+## 1. Arquitectura MVC en Capas
 
 <div align="center">
 
@@ -48,7 +28,7 @@
 
 ---
 
-## 3. Modelo Entidad-Relación y Transacción ACID
+## 2. Modelo Entidad-Relación y Transacción ACID
 
 <div align="center">
 
@@ -82,7 +62,7 @@ COMMIT;  -- ROLLBACK automático si cualquier paso falla
 
 ---
 
-## 4. Vista: Layout Interactivo y Semáforo de Saturación
+## 3. Vista: Layout Interactivo y Semáforo de Saturación
 
 <div align="center">
 
