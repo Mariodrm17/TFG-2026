@@ -28,7 +28,6 @@
 
 ---
 
-<<<<<<< HEAD
 ## 2. Diagrama de Despliegue
 
 <div align="center">
@@ -44,9 +43,6 @@
 ---
 
 ## 3. Modelo Entidad-Relación y Transacción ACID
-=======
-## 2. Modelo Entidad-Relación y Transacción ACID
->>>>>>> 45adfcdde896a0db39d9c76de2ac3bbf3607add5
 
 <div align="center">
 
