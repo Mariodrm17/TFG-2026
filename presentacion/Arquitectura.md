@@ -2,27 +2,7 @@
 
 ---
 
-## 1. Caso de Uso en Acción: UC-01 Registrar Entrada de Palé
-
-<div align="center">
-
-![UI — Operaciones: Entrada de Palé](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/screenshots/tab-entrada.png)
-
-</div>
-
-<div align="center">
-
-![DSS — UC-01 Registrar Entrada de Palé](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/diseno/seq-uc01.png)
-
-</div>
-
-- **Controlador por Caso de Uso:** `ControladorEntradaPale` gestiona en exclusiva el flujo UC-01. La Vista solo invoca y presenta; el Modelo solo persiste — ninguna capa sobrepasa su responsabilidad.
-- **Bloqueo FOR UPDATE:** El sector se bloquea en exclusiva antes de verificar su capacidad. Este `SELECT … FOR UPDATE` es la solución directa al deadlock que bloqueaba jornadas enteras en el Access.
-- **Regla antifraude de timestamps:** La `fecha_hora` del movimiento la fija el servidor en el instante de la transacción ACID — nunca el cliente — garantizando la inmutabilidad del registro de auditoría.
-
----
-
-## 2. Arquitectura MVC en Capas
+## 1. Arquitectura MVC en Capas
 
 <div align="center">
 
@@ -45,6 +25,20 @@
 ![Clases de Análisis MVC](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/diseno/clases-analisis.png)
 
 </div>
+
+---
+
+## 2. Diagrama de Despliegue
+
+<div align="center">
+
+![Diagrama de Despliegue](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/diseno/despliegue.png)
+
+</div>
+
+- **Infraestructura WAMP64 existente:** Apache, MySQL 8.0 y Node.js 20 corren en la misma máquina de la empresa — sin coste adicional de infraestructura ni cambio de entorno para el cliente.
+- **Express sirve el frontend estáticamente:** La SPA se distribuye como ficheros estáticos desde el propio servidor Node.js — cero dependencias en el dispositivo del operario más allá del navegador.
+- **Acceso desde cualquier dispositivo de la red:** Tablets industriales, móviles y PCs del almacén acceden vía navegador a la misma URL local — el RBAC garantiza que cada dispositivo ve solo lo que su rol permite.
 
 ---
 
@@ -79,20 +73,6 @@ START TRANSACTION;
 
 COMMIT;  -- ROLLBACK automático si cualquier paso falla
 ```
-
----
-
-## 4. Vista: Layout Interactivo y Semáforo de Saturación
-
-<div align="center">
-
-![Layout Interactivo — UC-03](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/screenshots/layout.png)
-
-</div>
-
-- **Vista = invocar + presentar:** La SPA invoca `GET /api/sectores`, recibe el JSON de ocupación y colorea cada celda del grid de sectores sin recargar la página. Toda la lógica de negocio (cálculo, validación) vive en `ControladorLayout` y `ControladorSaturacion`.
-- **Semáforo de 5 niveles:** Libre (<60%) · Bajo (<75%) · Medio (<85%) · Alto (<95%) · Crítico (≥95%) — calculado sobre `ocupacion_actual / capacidad_max`. El operario ve el estado del sector antes de seleccionarlo para una entrada.
-- **Datos reales del almacén:** 2.444 palés activos · 10.382 huecos de capacidad total · 118 sectores activos · 23,5 % de ocupación global en el momento de las capturas de pantalla.
 
 ---
 
