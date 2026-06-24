@@ -74,23 +74,4 @@ START TRANSACTION;
 COMMIT;  -- ROLLBACK automático si cualquier paso falla
 ```
 
----
-
-<<<<<<< HEAD
-=======
-## 3. Vista: Layout Interactivo y Semáforo de Saturación
-
-<div align="center">
-
-![Layout Interactivo — UC-03](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/screenshots/layout.png)
-
-</div>
-
-- **Vista = invocar + presentar:** La SPA invoca `GET /api/sectores`, recibe el JSON de ocupación y colorea cada celda del grid de sectores sin recargar la página. Toda la lógica de negocio (cálculo, validación) vive en `ControladorLayout` y `ControladorSaturacion`.
-- **Semáforo de 5 niveles:** Libre (<60%) · Bajo (<75%) · Medio (<85%) · Alto (<95%) · Crítico (≥95%) — calculado sobre `ocupacion_actual / capacidad_max`. El operario ve el estado del sector antes de seleccionarlo para una entrada.
-- **Datos reales del almacén:** 2.444 palés activos · 10.382 huecos de capacidad total · 118 sectores activos · 23,5 % de ocupación global en el momento de las capturas de pantalla.
-
----
-
->>>>>>> 45adfcdde896a0db39d9c76de2ac3bbf3607add5
 [1. Contexto](./Introduccion.md) | [2. Análisis y Requisitos](./AnalisisyRequisitos.md) | [3. Arquitectura](./Arquitectura.md) | [4. Demostración](./Demostracion.md) | [5. Conclusiones](./Conclusiones.md)
