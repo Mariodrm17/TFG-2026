@@ -1,6 +1,5 @@
 # Diagramas y Casos de Uso — WMS Santander
 
-> Índice general. Usa **Ctrl + F** o navega por sección. Cada página enlaza con las demás.
 
 [Dominio](./01-dominio.md) | [Casos de Uso](./02-casos-de-uso.md) | [Actividades](./03-actividades.md) | [Arquitectura](./04-arquitectura.md) | [Secuencias](./05-secuencias.md) | [Screenshots](./06-screenshots.md)
 
