@@ -14,18 +14,6 @@
 - **Middleware JWT centralizado:** Toda ruta REST pasa por `verificarSesion(token)` antes de llegar al controlador. Un único punto de control RBAC; si el token es inválido o el rol insuficiente, la petición no llega al controlador.
 - **Un controlador por caso de uso:** 12 UC → 12 controladores independientes. Ningún controlador llama a otro — la lógica de cada UC está completamente encapsulada.
 
-| Capa | Tecnología | Requisito que cubre |
-|------|-----------|---------------------|
-| **Vista** (invocar · presentar) | Vanilla JS · SPA hash routing · CSS Grid | Mobile-First sin build step · RS-04 · RS-05 |
-| **Controlador** (un controlador por UC) | Node.js 20 · Express 4 · JWT 8h · bcryptjs | API REST para Rollship · RBAC 4 roles · RS-E1 · RS-03 |
-| **Modelo** (derivado del dominio) | MySQL 8.0 · InnoDB · Row-Level Locking | ACID garantizado · sin deadlocks · RS-07 · RS-E3 |
-
-<div align="center">
-
-![Clases de Análisis MVC](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/diseno/clases-analisis.png)
-
-</div>
-
 ---
 
 ## 2. Diagrama de Despliegue
@@ -46,7 +34,7 @@
 
 <div align="center">
 
-![Modelo ER](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/diseno/er-modelo.png)
+<img src="https://github.com/Mariodrm17/TFG-2026/blob/main/docs/diseno/er-modelo.png" width="95%" alt="Modelo ER">
 
 </div>
 
@@ -73,5 +61,20 @@ START TRANSACTION;
 
 COMMIT;  -- ROLLBACK automático si cualquier paso falla
 ```
+
+---
+
+## 4. Derivación de Controladores (Larman)
+
+> *Diapositiva de reserva: usar solo si el tribunal pregunta cómo se derivaron los controladores desde los casos de uso.*
+
+<div align="center">
+
+![Clases de Análisis MVC](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/diseno/clases-analisis.png)
+
+</div>
+
+- **Metodología Larman:** Cada caso de uso genera exactamente un controlador — UC-01 → `ControladorEntradaPale`, UC-04 → `ControladorReubicacion`, etc. La correspondencia es 1:1 y trazable.
+- **Derivación del Modelo desde el dominio:** Las entidades `Pale`, `Sector`, `Mercancia` y `Movimiento` emergen directamente del análisis del dominio — no son diseño arbitrario sino resultado de la metodología.
 
 [1. Contexto](./Introduccion.md) | [2. Análisis y Requisitos](./AnalisisyRequisitos.md) | [3. Arquitectura](./Arquitectura.md) | [4. Demostración](./Demostracion.md) | [5. Conclusiones](./Conclusiones.md)
