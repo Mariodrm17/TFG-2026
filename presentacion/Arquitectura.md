@@ -42,24 +42,6 @@
 - **Doble FK sector en MOVIMIENTOS:** `sector_origen` + `sector_destino` registra la reubicación (UC-04) en una sola fila. El historial completo de un palé en UC-12 se obtiene con un `SELECT … WHERE pale_id = ? ORDER BY fecha_hora`.
 - **MIGRACION_ACCESS como tabla de staging:** Los datos del Access se importan en bruto como `datos_raw : json`, se procesan y se marcan `procesado = 1`. La migración ETL es idempotente — se puede relanzar sin duplicar registros.
 
-```sql
--- ControladorEntradaPale — transacción ACID UC-01
-START TRANSACTION;
 
-  SELECT id, ocupacion_actual, capacidad_max
-    FROM sectores WHERE id = ? FOR UPDATE;       -- Row-Level Lock: bloqueo exclusivo del sector
-
-  INSERT INTO pales (codigo_ref, sector_id, mercancia_id, estado)
-    VALUES (?, ?, ?, 'emplazado');
-
-  INSERT INTO movimientos (pale_id, usuario_id, tipo, sector_destino, fecha_hora)
-    VALUES (LAST_INSERT_ID(), ?, 'entrada', ?, NOW());  -- timestamp del servidor
-
-  UPDATE sectores
-    SET ocupacion_actual = ocupacion_actual + 1
-    WHERE id = ?;
-
-COMMIT;  -- ROLLBACK automático si cualquier paso falla
-```
 
 [1. Contexto](./Introduccion.md) | [2. Análisis y Requisitos](./AnalisisyRequisitos.md) | [3. Arquitectura](./Arquitectura.md) | [4. Demostración](./Demostracion.md) | [5. Conclusiones](./Conclusiones.md)
