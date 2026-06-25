@@ -62,19 +62,4 @@ START TRANSACTION;
 COMMIT;  -- ROLLBACK automático si cualquier paso falla
 ```
 
----
-
-## 4. Derivación de Controladores (Larman)
-
-> *Diapositiva de reserva: usar solo si el tribunal pregunta cómo se derivaron los controladores desde los casos de uso.*
-
-<div align="center">
-
-![Clases de Análisis MVC](https://github.com/Mariodrm17/TFG-2026/blob/main/docs/diseno/clases-analisis.png)
-
-</div>
-
-- **Metodología Larman:** Cada caso de uso genera exactamente un controlador — UC-01 → `ControladorEntradaPale`, UC-04 → `ControladorReubicacion`, etc. La correspondencia es 1:1 y trazable.
-- **Derivación del Modelo desde el dominio:** Las entidades `Pale`, `Sector`, `Mercancia` y `Movimiento` emergen directamente del análisis del dominio — no son diseño arbitrario sino resultado de la metodología.
-
 [1. Contexto](./Introduccion.md) | [2. Análisis y Requisitos](./AnalisisyRequisitos.md) | [3. Arquitectura](./Arquitectura.md) | [4. Demostración](./Demostracion.md) | [5. Conclusiones](./Conclusiones.md)
