@@ -44,13 +44,6 @@
 - **Multi-almacén:** El modelo del dominio (`Almacen → Sector → Palé`) ya contempla múltiples almacenes; la capa de datos y el frontend necesitarían extenderse para una futura expansión de INTERMODAL.
 - **App PWA con acceso offline:** Versión Progressive Web App que permita registrar entradas/salidas sin conexión y sincronizar al recuperar red — crítico para zonas del muelle con cobertura intermitente.
 
----
-
-## 4. Cierre
-
-**¡Muchas gracias al tribunal por su atención!**
-
-*Quedo a su entera disposición para responder a cualquier pregunta.*
 
 ---
 
